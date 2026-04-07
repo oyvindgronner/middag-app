@@ -5,16 +5,782 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Middagsplanlegger</title>
   <style>
-    body { font-family: system-ui, sans-serif; background: #fff; color: #222; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-    .placeholder { text-align: center; }
-    h1 { color: #e8621a; font-size: 2rem; margin-bottom: 0.5rem; }
-    p { color: #666; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #fff;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    /* HEADER */
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    header h1 {
+      font-size: 1.8rem;
+      color: #e8621a;
+      font-weight: 700;
+    }
+    header p {
+      color: #666;
+      font-size: 0.95rem;
+      margin-top: 0.3rem;
+    }
+
+    /* FORM */
+    fieldset {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+    }
+    legend {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #444;
+      padding: 0 0.4rem;
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    .field-row:first-of-type { margin-top: 0.5rem; }
+
+    label.field-label {
+      font-size: 0.9rem;
+      color: #444;
+      min-width: 160px;
+    }
+
+    input[type="number"] {
+      width: 70px;
+      padding: 0.35rem 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 0.35rem 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+    input[type="number"]:focus,
+    input[type="text"]:focus {
+      outline: 2px solid #e8621a;
+      outline-offset: 1px;
+      border-color: transparent;
+    }
+
+    .check-group, .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      margin-top: 0.5rem;
+    }
+    .check-group label, .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.88rem;
+      color: #333;
+      cursor: pointer;
+    }
+    .check-group input, .radio-group input {
+      accent-color: #e8621a;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.75rem;
+    }
+    .toggle-label {
+      font-size: 0.9rem;
+      color: #444;
+    }
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 42px;
+      height: 24px;
+    }
+    .toggle input { display: none; }
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #ccc;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle input:checked + .slider { background: #e8621a; }
+    .toggle input:checked + .slider::before { transform: translateX(18px); }
+
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 0.85rem;
+      background: #e8621a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 1.25rem;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .submit-btn:hover { background: #d4561a; }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+    .error-msg {
+      background: #fff3f0;
+      border: 1px solid #f5a89a;
+      color: #c0392b;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    /* LOADING */
+    .loading-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 260px;
+      gap: 1.2rem;
+    }
+    .loading-section p {
+      color: #666;
+      font-size: 1rem;
+    }
+
+    @keyframes bubbleRise {
+      0%   { transform: translateY(0);    opacity: 0.85; }
+      80%  { transform: translateY(-40px); opacity: 0.4; }
+      100% { transform: translateY(-50px); opacity: 0; }
+    }
+    .bubble { animation: bubbleRise 1.6s ease-in infinite; }
+    .bubble:nth-child(2) { animation-delay: 0.5s; }
+    .bubble:nth-child(3) { animation-delay: 1s; }
+
+    /* RESULTS */
+    .results-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .results-header h2 {
+      font-size: 1.2rem;
+      color: #222;
+    }
+    .total-price {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .total-price strong { color: #e8621a; }
+
+    .meal-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.9rem 1.1rem;
+      cursor: pointer;
+      user-select: none;
+      background: #fff;
+      transition: background 0.1s;
+    }
+    .card-header:hover { background: #fdf5f1; }
+    .card-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .card-day {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #e8621a;
+    }
+    .card-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #222;
+    }
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.2rem;
+    }
+    .tag {
+      font-size: 0.75rem;
+      background: #f5f5f5;
+      color: #555;
+      border-radius: 4px;
+      padding: 0.15rem 0.45rem;
+    }
+    .tag.leftovers { background: #e8f5e9; color: #2e7d32; }
+    .card-toggle {
+      font-size: 1.1rem;
+      color: #999;
+      transition: transform 0.25s;
+      flex-shrink: 0;
+      margin-left: 1rem;
+    }
+    .meal-card.open .card-toggle { transform: rotate(180deg); }
+
+    .card-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+      border-top: 0px solid #e0e0e0;
+    }
+    .meal-card.open .card-body {
+      max-height: 2000px;
+      border-top-width: 1px;
+    }
+    .card-body-inner {
+      padding: 1rem 1.1rem 1.2rem;
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #888;
+      margin-bottom: 0.6rem;
+    }
+    .recipe-steps {
+      list-style: none;
+      counter-reset: steps;
+    }
+    .recipe-steps li {
+      counter-increment: steps;
+      display: flex;
+      gap: 0.6rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+    .recipe-steps li::before {
+      content: counter(steps);
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      background: #e8621a;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.1rem;
+    }
+
+    .veggie-alt {
+      font-size: 0.85rem;
+      color: #555;
+      background: #f0faf0;
+      border-left: 3px solid #66bb6a;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0 5px 5px 0;
+      margin: 0.75rem 0;
+    }
+    .veggie-alt strong { color: #2e7d32; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 0.85rem 0;
+    }
+
+    .shopping-list {
+      list-style: none;
+    }
+    .shopping-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.3rem 0;
+      font-size: 0.9rem;
+      color: #333;
+    }
+    .shopping-list input[type="checkbox"] {
+      accent-color: #e8621a;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .item-text { flex: 1; }
+    .item-amount { font-size: 0.82rem; color: #888; flex-shrink: 0; }
+    .item-price {
+      font-size: 0.8rem;
+      color: #aaa;
+      flex-shrink: 0;
+      min-width: 45px;
+      text-align: right;
+    }
+
+    .card-price {
+      text-align: right;
+      font-size: 0.82rem;
+      color: #888;
+      margin-top: 0.75rem;
+    }
+    .card-price strong { color: #e8621a; }
+
+    .combined-list-section {
+      margin-top: 1.5rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .combined-list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.9rem 1.1rem;
+      cursor: pointer;
+      background: #fdf5f1;
+      user-select: none;
+    }
+    .combined-list-header h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #222;
+    }
+    .combined-list-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .combined-list-section.open .combined-list-body { max-height: 3000px; }
+    .combined-list-section.open .combined-list-header .card-toggle { transform: rotate(180deg); }
+
+    .category-group { padding: 0.75rem 1.1rem; border-top: 1px solid #eee; }
+    .category-group:first-child { border-top: none; }
+    .category-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #e8621a;
+      margin-bottom: 0.4rem;
+    }
+
+    .new-plan-btn {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      background: #fff;
+      color: #e8621a;
+      border: 2px solid #e8621a;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: background 0.15s;
+    }
+    .new-plan-btn:hover { background: #fdf5f1; }
+
+    [hidden] { display: none !important; }
   </style>
 </head>
 <body>
-  <div class="placeholder">
-    <h1>🍲 Middagsplanlegger</h1>
-    <p>Kommer snart — frontend under utvikling</p>
+  <div class="container">
+
+    <header>
+      <h1>🍲 Middagsplanlegger</h1>
+      <p>Lag en ukesmeny tilpasset din familie</p>
+    </header>
+
+    <!-- SKJEMA -->
+    <section id="form-section">
+      <form id="meal-form" novalidate>
+
+        <fieldset>
+          <legend>Grunninnstillinger</legend>
+
+          <div class="field-row">
+            <label class="field-label" for="antallMiddager">Antall middager</label>
+            <input type="number" id="antallMiddager" name="days" min="1" max="7" value="5">
+          </div>
+
+          <div class="field-row">
+            <label class="field-label" for="personer">Antall personer</label>
+            <input type="number" id="personer" name="persons" min="1" max="10" value="4">
+          </div>
+
+          <div class="field-row" style="align-items:flex-start; flex-direction:column; gap:0.3rem;">
+            <span style="font-size:0.9rem; color:#444;">Alder i husstanden</span>
+            <div class="check-group">
+              <label><input type="checkbox" name="ages" value="voksen" checked> Voksen</label>
+              <label><input type="checkbox" name="ages" value="barn"> Barn</label>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Allergier og intoleranser</legend>
+          <div class="check-group">
+            <label><input type="checkbox" name="allergies" value="gluten"> Gluten</label>
+            <label><input type="checkbox" name="allergies" value="laktose"> Laktose</label>
+            <label><input type="checkbox" name="allergies" value="egg"> Egg</label>
+            <label><input type="checkbox" name="allergies" value="nøtter"> Nøtter</label>
+            <label><input type="checkbox" name="allergies" value="skalldyr"> Skalldyr</label>
+            <label><input type="checkbox" name="allergies" value="fisk"> Fisk</label>
+            <label><input type="checkbox" name="allergies" value="soya"> Soya</label>
+            <label><input type="checkbox" name="allergies" value="selleri"> Selleri</label>
+            <label><input type="checkbox" name="allergies" value="sennep"> Sennep</label>
+            <label><input type="checkbox" name="allergies" value="sesam"> Sesam</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Tilberedning</legend>
+
+          <div style="margin-top:0.5rem;">
+            <span style="display:block; font-size:0.9rem; color:#444; margin-bottom:0.4rem;">Maks tilberedningstid</span>
+            <div class="radio-group">
+              <label><input type="radio" name="cookTime" value="15"> 15 min</label>
+              <label><input type="radio" name="cookTime" value="30" checked> 30 min</label>
+              <label><input type="radio" name="cookTime" value="45"> 45 min</label>
+              <label><input type="radio" name="cookTime" value="60"> 60+ min</label>
+            </div>
+          </div>
+
+          <div style="margin-top:0.8rem;">
+            <span style="display:block; font-size:0.9rem; color:#444; margin-bottom:0.4rem;">Vanskelighetsgrad</span>
+            <div class="radio-group">
+              <label><input type="radio" name="difficulty" value="enkel" checked> Enkel</label>
+              <label><input type="radio" name="difficulty" value="avansert"> Avansert</label>
+            </div>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Restemat-vennlig</span>
+            <label class="toggle">
+              <input type="checkbox" name="leftovers" value="true">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Kosthold</legend>
+
+          <div class="field-row">
+            <label class="field-label" for="fiskemiddager">Fiskemiddager per uke</label>
+            <input type="number" id="fiskemiddager" name="fishPerWeek" min="0" max="7" value="2">
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Alltid vegetarisk alternativ</span>
+            <label class="toggle">
+              <input type="checkbox" name="vegetarian" value="true" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="field-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; margin-top:0.8rem;">
+            <label style="font-size:0.9rem; color:#444;" for="likerSpesielt">Liker spesielt</label>
+            <input type="text" id="likerSpesielt" name="likesEspecially" placeholder="f.eks. fisk, pasta, indisk..." value="fisk">
+          </div>
+
+          <div class="field-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; margin-top:0.8rem;">
+            <label style="font-size:0.9rem; color:#444;" for="vilIkkeHa">Vil ikke ha</label>
+            <input type="text" id="vilIkkeHa" name="dontWant" placeholder="f.eks. innmat, bønner...">
+          </div>
+        </fieldset>
+
+        <div id="form-error" class="error-msg" hidden></div>
+
+        <button type="submit" class="submit-btn" id="submit-btn">
+          Generer ukemeny
+        </button>
+      </form>
+    </section>
+
+    <!-- LASTER -->
+    <section id="loading-section" class="loading-section" hidden>
+      <svg width="100" height="120" viewBox="0 0 100 120" aria-hidden="true" style="overflow:visible;">
+        <!-- Dampbobler -->
+        <g transform="translate(50, 22)">
+          <ellipse class="bubble" cx="-14" cy="0" rx="4" ry="5" fill="#e8621a" opacity="0.7"/>
+          <ellipse class="bubble" cx="0"   cy="4" rx="4" ry="5" fill="#e8621a" opacity="0.7"/>
+          <ellipse class="bubble" cx="14"  cy="0" rx="4" ry="5" fill="#e8621a" opacity="0.7"/>
+        </g>
+        <!-- Lokk -->
+        <ellipse cx="50" cy="52" rx="34" ry="8" fill="#d4561a"/>
+        <rect x="43" y="44" width="14" height="9" rx="4" fill="#b84a15"/>
+        <!-- Gryte kropp -->
+        <path d="M18 56 Q16 82 22 94 L78 94 Q84 82 82 56 Z" fill="#e8621a"/>
+        <!-- Bunn -->
+        <ellipse cx="50" cy="94" rx="28" ry="6" fill="#d4561a"/>
+        <!-- Håndtak -->
+        <path d="M18 62 Q8 62 8 72 Q8 80 18 80" stroke="#c45018" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M82 62 Q92 62 92 72 Q92 80 82 80" stroke="#c45018" stroke-width="5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <p>Planlegger ukens middager&hellip;</p>
+    </section>
+
+    <!-- RESULTATER -->
+    <section id="results-section" hidden>
+      <div class="results-header">
+        <h2 id="results-title">Ukens middager</h2>
+        <span class="total-price" id="results-total"></span>
+      </div>
+
+      <div id="meals-container"></div>
+
+      <div class="combined-list-section" id="combined-list-section">
+        <div class="combined-list-header" id="combined-list-toggle">
+          <h3>🛒 Samlet handleliste</h3>
+          <span class="card-toggle">▼</span>
+        </div>
+        <div class="combined-list-body">
+          <div id="combined-list-inner"></div>
+        </div>
+      </div>
+
+      <button class="new-plan-btn" id="new-plan-btn">← Lag ny ukemeny</button>
+    </section>
+
   </div>
+
+  <script>
+    const API = 'http://37.153.139.160:3000/api/meal-plan';
+
+    const formSection    = document.getElementById('form-section');
+    const loadingSection = document.getElementById('loading-section');
+    const resultsSection = document.getElementById('results-section');
+    const form           = document.getElementById('meal-form');
+    const submitBtn      = document.getElementById('submit-btn');
+    const formError      = document.getElementById('form-error');
+    const mealsContainer = document.getElementById('meals-container');
+    const combinedInner  = document.getElementById('combined-list-inner');
+    const resultsTotal   = document.getElementById('results-total');
+    const newPlanBtn     = document.getElementById('new-plan-btn');
+
+    function buildParams(f) {
+      const p = new URLSearchParams();
+      p.set('days',    f.querySelector('[name="days"]').value);
+      p.set('persons', f.querySelector('[name="persons"]').value);
+
+      f.querySelectorAll('[name="ages"]:checked').forEach(el => p.append('ages', el.value));
+      f.querySelectorAll('[name="allergies"]:checked').forEach(el => p.append('allergies', el.value));
+
+      p.set('cookTime',        f.querySelector('[name="cookTime"]:checked').value);
+      p.set('difficulty',      f.querySelector('[name="difficulty"]:checked').value);
+      p.set('leftovers',       f.querySelector('[name="leftovers"]').checked ? 'true' : 'false');
+      p.set('fishPerWeek',     f.querySelector('[name="fishPerWeek"]').value);
+      p.set('vegetarian',      f.querySelector('[name="vegetarian"]').checked ? 'true' : 'false');
+      p.set('likesEspecially', f.querySelector('[name="likesEspecially"]').value);
+      p.set('dontWant',        f.querySelector('[name="dontWant"]').value);
+      return p;
+    }
+
+    function typeIcon(type) {
+      return type === 'fish' ? '🐟' : type === 'vegetarian' ? '🥦' : '🥩';
+    }
+    function typeLabel(type) {
+      return type === 'fish' ? 'Fisk' : type === 'vegetarian' ? 'Vegetar' : 'Kjøtt';
+    }
+
+    function buildMealCard(meal, idx) {
+      const card = document.createElement('article');
+      card.className = 'meal-card' + (idx === 0 ? ' open' : '');
+
+      const tags = [
+        `<span class="tag">${typeIcon(meal.type)} ${typeLabel(meal.type)}</span>`,
+        `<span class="tag">⏱ ${meal.prepTime} min</span>`,
+        meal.leftoverFriendly ? `<span class="tag leftovers">♻️ Restemat</span>` : ''
+      ].join('');
+
+      const stepsHtml = meal.recipe.steps.map(s => `<li>${s}</li>`).join('');
+      const veggieHtml = meal.vegetarianAlternative
+        ? `<p class="veggie-alt"><strong>Vegetarisk:</strong> ${meal.vegetarianAlternative}</p>` : '';
+
+      const shoppingHtml = meal.shoppingList.map((item, i) => {
+        const id = `m${idx}-i${i}`;
+        return `<li>
+          <input type="checkbox" id="${id}">
+          <label for="${id}" class="item-text">${item.item}</label>
+          <span class="item-amount">${item.amount}</span>
+          <span class="item-price">kr ${item.estimatedPrice}</span>
+        </li>`;
+      }).join('');
+
+      card.innerHTML = `
+        <div class="card-header" role="button" aria-expanded="${idx === 0}">
+          <div class="card-header-left">
+            <span class="card-day">${meal.day}</span>
+            <span class="card-name">${meal.name}</span>
+            <div class="card-meta">${tags}</div>
+          </div>
+          <span class="card-toggle" aria-hidden="true">▼</span>
+        </div>
+        <div class="card-body">
+          <div class="card-body-inner">
+            <p class="section-title">Fremgangsmåte &middot; ${meal.recipe.servings} porsjoner</p>
+            <ol class="recipe-steps">${stepsHtml}</ol>
+            ${veggieHtml}
+            <hr class="divider">
+            <p class="section-title">Ingredienser</p>
+            <ul class="shopping-list">${shoppingHtml}</ul>
+            <p class="card-price">Estimert pris: <strong>kr ${meal.totalPrice}</strong></p>
+          </div>
+        </div>`;
+
+      card.querySelector('.card-header').addEventListener('click', () => {
+        const isOpen = card.classList.toggle('open');
+        card.querySelector('.card-header').setAttribute('aria-expanded', isOpen);
+      });
+
+      // Strikethrough ved avkryssing
+      card.querySelectorAll('.shopping-list input').forEach(cb => {
+        cb.addEventListener('change', () => {
+          const lbl = cb.nextElementSibling;
+          lbl.style.textDecoration = cb.checked ? 'line-through' : '';
+          lbl.style.color          = cb.checked ? '#aaa' : '';
+        });
+      });
+
+      return card;
+    }
+
+    function buildCombinedList(items, totalPrice) {
+      const groups = {};
+      items.forEach(item => {
+        (groups[item.category] = groups[item.category] || []).push(item);
+      });
+
+      let html = Object.entries(groups).map(([cat, catItems]) => {
+        const rows = catItems.map((item, i) => {
+          const id = `cl-${cat}-${i}`;
+          return `<li>
+            <input type="checkbox" id="${id}">
+            <label for="${id}" class="item-text">${item.item}</label>
+            <span class="item-amount">${item.amount}</span>
+            <span class="item-price">kr ${item.estimatedPrice}</span>
+          </li>`;
+        }).join('');
+        return `<div class="category-group">
+          <p class="category-title">${cat}</p>
+          <ul class="shopping-list">${rows}</ul>
+        </div>`;
+      }).join('');
+
+      html += `<div style="padding:0.75rem 1.1rem 1rem; text-align:right; font-size:0.9rem; color:#666; border-top:1px solid #eee;">
+        Total estimert handlekostnad: <strong style="color:#e8621a;">kr ${totalPrice}</strong>
+      </div>`;
+
+      combinedInner.innerHTML = html;
+
+      combinedInner.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', () => {
+          const lbl = cb.nextElementSibling;
+          lbl.style.textDecoration = cb.checked ? 'line-through' : '';
+          lbl.style.color          = cb.checked ? '#aaa' : '';
+        });
+      });
+    }
+
+    function renderResults(data) {
+      mealsContainer.innerHTML = '';
+      data.meals.forEach((meal, i) => mealsContainer.appendChild(buildMealCard(meal, i)));
+      buildCombinedList(data.shoppingList, data.totalPrice);
+
+      document.getElementById('results-title').textContent = `${data.meta.days} middager planlagt`;
+      resultsTotal.innerHTML = `Totalt <strong>kr ${data.totalPrice}</strong>`;
+
+      loadingSection.hidden = true;
+      resultsSection.hidden = false;
+    }
+
+    document.getElementById('combined-list-toggle').addEventListener('click', () => {
+      document.getElementById('combined-list-section').classList.toggle('open');
+    });
+
+    newPlanBtn.addEventListener('click', () => {
+      resultsSection.hidden = true;
+      formSection.hidden    = false;
+      submitBtn.disabled    = false;
+    });
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      formError.hidden  = true;
+      submitBtn.disabled = true;
+
+      const params = buildParams(form);
+      formSection.hidden    = true;
+      loadingSection.hidden = false;
+
+      try {
+        const res = await fetch(`${API}?${params}`);
+        if (!res.ok) throw new Error(`Server svarte med ${res.status}`);
+        const data = await res.json();
+        renderResults(data);
+      } catch (err) {
+        loadingSection.hidden = false;
+        formSection.hidden    = false;
+        loadingSection.hidden = true;
+        formError.textContent = `Noe gikk galt: ${err.message}. Prøv igjen.`;
+        formError.hidden      = false;
+        submitBtn.disabled    = false;
+      }
+    });
+  </script>
 </body>
 </html>

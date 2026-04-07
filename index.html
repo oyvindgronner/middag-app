@@ -612,6 +612,70 @@
     }
     .new-plan-btn:hover { background: #fdf5f1; }
 
+    /* ── STORE COMPARISON ───────────────────────────────────────────────── */
+    .store-comparison {
+      margin-top: 1.25rem;
+      border: 1px solid #e8621a;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .store-comparison-header {
+      background: #fdf5f1;
+      padding: 0.9rem 1.1rem;
+      border-bottom: 1px solid #f5ddd0;
+    }
+    .store-comparison-header h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 0.3rem;
+    }
+    .store-recommendation {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #e8621a;
+    }
+    .store-savings {
+      font-size: 0.82rem;
+      color: #888;
+      margin-top: 0.15rem;
+    }
+    .store-ranking {
+      list-style: none;
+      padding: 0.5rem 0;
+    }
+    .store-ranking li {
+      display: flex;
+      align-items: center;
+      padding: 0.45rem 1.1rem;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+    }
+    .store-ranking li:not(:last-child) { border-bottom: 1px solid #f8f4f1; }
+    .store-rank-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #f0ece8;
+      color: #888;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .store-rank-badge.best {
+      background: #e8621a;
+      color: #fff;
+    }
+    .store-rank-name { flex: 1; color: #333; }
+    .store-rank-name.best { font-weight: 700; color: #222; }
+    .store-rank-total { font-size: 0.88rem; color: #555; flex-shrink: 0; }
+    .store-rank-extra { font-size: 0.78rem; color: #bbb; flex-shrink: 0; min-width: 60px; text-align: right; }
+    .store-rank-extra.best { color: #e8621a; font-weight: 700; }
+
     [hidden] { display: none !important; }
 
     /* ── MOBILE ──────────────────────────────────────────────────────────── */
@@ -801,6 +865,8 @@
       </div>
 
       <div id="meals-container"></div>
+
+      <div id="store-comparison-section"></div>
 
       <div class="combined-list-section" id="combined-list-section">
         <div class="combined-list-header" id="combined-list-toggle">
@@ -1021,9 +1087,37 @@
       });
     }
 
+    function buildStoreComparison(sc) {
+      const el = document.getElementById('store-comparison-section');
+      if (!sc) { el.innerHTML = ''; return; }
+
+      const rows = sc.storeRanking.map((s, i) => {
+        const best = i === 0;
+        const extraText = best
+          ? '<span class="store-rank-extra best">Billigst</span>'
+          : `<span class="store-rank-extra">+kr ${s.extra}</span>`;
+        return `<li>
+          <span class="store-rank-badge${best ? ' best' : ''}">${i + 1}</span>
+          <span class="store-rank-name${best ? ' best' : ''}">${s.store}</span>
+          <span class="store-rank-total">kr ${s.total}</span>
+          ${extraText}
+        </li>`;
+      }).join('');
+
+      el.innerHTML = `<div class="store-comparison">
+        <div class="store-comparison-header">
+          <h3>🏪 Butikksammenligning</h3>
+          <div class="store-recommendation">${sc.recommendation}</div>
+          <div class="store-savings">Spar opptil kr ${sc.savingsVsMostExpensive} vs. dyreste butikk</div>
+        </div>
+        <ul class="store-ranking">${rows}</ul>
+      </div>`;
+    }
+
     function renderResults(data) {
       mealsContainer.innerHTML = '';
       data.meals.forEach((meal, i) => mealsContainer.appendChild(buildMealCard(meal, i)));
+      buildStoreComparison(data.storeComparison || null);
       buildCombinedList(data.shoppingList, data.totalPrice);
 
       const adults   = parseInt(form.querySelector('[name="adults"]').value);

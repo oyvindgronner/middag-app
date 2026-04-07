@@ -3,50 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Middagsplanlegger</title>
+  <title>Stormat — Middagsplanlegger</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: system-ui, -apple-system, sans-serif;
-      background: #fff;
+      background: #fafaf8;
       color: #222;
       min-height: 100vh;
     }
 
     .container {
-      max-width: 680px;
+      max-width: 640px;
       margin: 0 auto;
       padding: 1.5rem 1rem 3rem;
     }
 
-    /* HEADER */
+    /* ── HEADER ─────────────────────────────────────────────────────────── */
     header {
       text-align: center;
       margin-bottom: 2rem;
     }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
     header h1 {
-      font-size: 1.8rem;
+      font-size: 2rem;
       color: #e8621a;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: -0.03em;
     }
     header p {
-      color: #666;
-      font-size: 0.95rem;
-      margin-top: 0.3rem;
+      color: #888;
+      font-size: 0.92rem;
     }
 
-    /* FORM */
+    /* ── FIELDSET / FORM ─────────────────────────────────────────────────── */
     fieldset {
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 1rem 1.2rem;
-      margin-bottom: 1rem;
+      border: 1px solid #e8e4e0;
+      border-radius: 12px;
+      padding: 1.1rem 1.2rem;
+      margin-bottom: 0.85rem;
+      background: #fff;
     }
     legend {
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #444;
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: #e8621a;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
       padding: 0 0.4rem;
     }
 
@@ -55,42 +64,127 @@
       align-items: center;
       gap: 0.75rem;
       margin-top: 0.75rem;
+      flex-wrap: wrap;
     }
     .field-row:first-of-type { margin-top: 0.5rem; }
 
     label.field-label {
       font-size: 0.9rem;
-      color: #444;
-      min-width: 160px;
+      color: #555;
+      min-width: 150px;
+      flex-shrink: 0;
     }
 
     input[type="number"] {
       width: 70px;
-      padding: 0.35rem 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      padding: 0.4rem 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 7px;
       font-size: 0.95rem;
       font-family: inherit;
+      background: #fafaf8;
     }
     input[type="text"] {
       flex: 1;
-      padding: 0.35rem 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      min-width: 0;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #ddd;
+      border-radius: 7px;
       font-size: 0.95rem;
       font-family: inherit;
+      background: #fafaf8;
     }
     input[type="number"]:focus,
     input[type="text"]:focus {
       outline: 2px solid #e8621a;
       outline-offset: 1px;
       border-color: transparent;
+      background: #fff;
     }
 
+    /* ── PERSON COUNTERS ─────────────────────────────────────────────────── */
+    .person-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    .person-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      background: #fafaf8;
+      border: 1px solid #e8e4e0;
+      border-radius: 10px;
+      padding: 0.75rem 0.5rem;
+    }
+    .person-box-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #555;
+      text-align: center;
+    }
+    .person-box-sub {
+      font-size: 0.72rem;
+      color: #aaa;
+      text-align: center;
+      margin-top: -0.25rem;
+    }
+    .person-counter {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid #e0dbd5;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .counter-btn {
+      width: 36px;
+      height: 36px;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: #e8621a;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.12s;
+      flex-shrink: 0;
+      touch-action: manipulation;
+    }
+    .counter-btn:hover { background: #fff3ee; }
+    .counter-btn:active { background: #ffe5d5; }
+    .person-counter input[type="number"] {
+      width: 42px;
+      height: 36px;
+      text-align: center;
+      border: none;
+      border-left: 1.5px solid #e0dbd5;
+      border-right: 1.5px solid #e0dbd5;
+      border-radius: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #222;
+      background: #fff;
+      padding: 0;
+      -moz-appearance: textfield;
+    }
+    .person-counter input[type="number"]::-webkit-outer-spin-button,
+    .person-counter input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .person-counter input[type="number"]:focus {
+      outline: none;
+      border-color: #e0dbd5;
+      background: #fff;
+    }
+
+    /* ── CHECKBOXES / RADIO ──────────────────────────────────────────────── */
     .check-group, .radio-group {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem 1rem;
+      gap: 0.45rem 0.85rem;
       margin-top: 0.5rem;
     }
     .check-group label, .radio-group label {
@@ -98,100 +192,124 @@
       align-items: center;
       gap: 0.35rem;
       font-size: 0.88rem;
-      color: #333;
+      color: #444;
       cursor: pointer;
+      padding: 0.15rem 0;
     }
     .check-group input, .radio-group input {
       accent-color: #e8621a;
       width: 15px;
       height: 15px;
       cursor: pointer;
+      flex-shrink: 0;
     }
 
+    /* ── TOGGLE ──────────────────────────────────────────────────────────── */
     .toggle-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 0.75rem;
+      margin-top: 0.85rem;
+      gap: 1rem;
     }
     .toggle-label {
       font-size: 0.9rem;
-      color: #444;
+      color: #555;
     }
     .toggle {
       position: relative;
       display: inline-block;
-      width: 42px;
-      height: 24px;
+      width: 44px;
+      height: 26px;
+      flex-shrink: 0;
     }
     .toggle input { display: none; }
     .slider {
       position: absolute;
       inset: 0;
-      background: #ccc;
-      border-radius: 24px;
+      background: #ddd;
+      border-radius: 26px;
       cursor: pointer;
       transition: background 0.2s;
     }
     .slider::before {
       content: '';
       position: absolute;
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       left: 3px;
       top: 3px;
       background: #fff;
       border-radius: 50%;
       transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.15);
     }
     .toggle input:checked + .slider { background: #e8621a; }
     .toggle input:checked + .slider::before { transform: translateX(18px); }
 
+    /* ── SUBMIT BUTTON ───────────────────────────────────────────────────── */
+    .submit-wrapper {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
     .submit-btn {
       display: block;
       width: 100%;
-      padding: 0.85rem;
-      background: #e8621a;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, #e8621a 0%, #c44d10 100%);
       color: #fff;
       border: none;
-      border-radius: 8px;
-      font-size: 1.05rem;
-      font-weight: 600;
+      border-radius: 12px;
+      font-size: 1.08rem;
+      font-weight: 700;
       font-family: inherit;
       cursor: pointer;
-      margin-top: 1.25rem;
-      transition: background 0.15s, transform 0.1s;
+      letter-spacing: -0.01em;
+      box-shadow: 0 4px 18px rgba(232,98,26,0.28);
+      transition: transform 0.12s, box-shadow 0.12s, background 0.15s;
+      touch-action: manipulation;
     }
-    .submit-btn:hover { background: #d4561a; }
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(232,98,26,0.35);
+    }
     .submit-btn:active { transform: scale(0.98); }
-    .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+    .submit-btn:disabled {
+      background: #ccc;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-tagline {
+      margin-top: 0.65rem;
+      font-size: 0.76rem;
+      color: #aaa;
+      line-height: 1.5;
+    }
 
     .error-msg {
       background: #fff3f0;
       border: 1px solid #f5a89a;
       color: #c0392b;
-      border-radius: 6px;
+      border-radius: 8px;
       padding: 0.75rem 1rem;
       margin-top: 1rem;
       font-size: 0.9rem;
     }
 
-    /* LOADING */
+    /* ── LOADING ─────────────────────────────────────────────────────────── */
     .loading-section {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 260px;
-      gap: 1.2rem;
-    }
-    .loading-section p {
-      color: #666;
-      font-size: 1rem;
+      min-height: 300px;
+      gap: 1.5rem;
+      padding: 2rem 1rem;
     }
 
     @keyframes bubbleRise {
-      0%   { transform: translateY(0);    opacity: 0.85; }
+      0%   { transform: translateY(0);     opacity: 0.85; }
       80%  { transform: translateY(-40px); opacity: 0.4; }
       100% { transform: translateY(-50px); opacity: 0; }
     }
@@ -199,28 +317,91 @@
     .bubble:nth-child(2) { animation-delay: 0.5s; }
     .bubble:nth-child(3) { animation-delay: 1s; }
 
-    /* RESULTS */
+    .loading-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      width: 100%;
+      max-width: 300px;
+    }
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .step-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .step-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #e0dbd5;
+      flex-shrink: 0;
+      transition: background 0.3s, border-color 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-item.visible .step-dot {
+      border-color: #e8621a;
+      background: #e8621a;
+    }
+    .step-item.visible .step-dot::after {
+      content: '✓';
+      font-size: 0.6rem;
+      color: #fff;
+      font-weight: 700;
+    }
+    .step-item.active .step-dot {
+      border-color: #e8621a;
+      background: transparent;
+      animation: pulse-dot 1s ease infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(232,98,26,0.35); }
+      50%       { box-shadow: 0 0 0 5px rgba(232,98,26,0); }
+    }
+    .step-text {
+      font-size: 0.87rem;
+      color: #bbb;
+      transition: color 0.3s;
+    }
+    .step-item.visible .step-text,
+    .step-item.active .step-text {
+      color: #444;
+    }
+
+    /* ── RESULTS ─────────────────────────────────────────────────────────── */
     .results-header {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
       margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.4rem;
     }
     .results-header h2 {
       font-size: 1.2rem;
+      font-weight: 700;
       color: #222;
     }
     .total-price {
-      font-size: 0.9rem;
-      color: #666;
+      font-size: 0.88rem;
+      color: #888;
     }
     .total-price strong { color: #e8621a; }
 
     .meal-card {
-      border: 1px solid #e0e0e0;
-      border-radius: 10px;
+      border: 1px solid #e8e4e0;
+      border-radius: 12px;
       margin-bottom: 0.75rem;
       overflow: hidden;
+      background: #fff;
     }
     .card-header {
       display: flex;
@@ -237,12 +418,14 @@
       display: flex;
       flex-direction: column;
       gap: 0.2rem;
+      flex: 1;
+      min-width: 0;
     }
     .card-day {
-      font-size: 0.78rem;
-      font-weight: 600;
+      font-size: 0.75rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.07em;
       color: #e8621a;
     }
     .card-name {
@@ -253,23 +436,24 @@
     .card-meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 0.2rem;
+      gap: 0.35rem;
+      margin-top: 0.25rem;
     }
     .tag {
-      font-size: 0.75rem;
-      background: #f5f5f5;
-      color: #555;
-      border-radius: 4px;
+      font-size: 0.73rem;
+      background: #f5f0eb;
+      color: #666;
+      border-radius: 5px;
       padding: 0.15rem 0.45rem;
+      white-space: nowrap;
     }
     .tag.leftovers { background: #e8f5e9; color: #2e7d32; }
     .card-toggle {
-      font-size: 1.1rem;
-      color: #999;
+      font-size: 1rem;
+      color: #ccc;
       transition: transform 0.25s;
       flex-shrink: 0;
-      margin-left: 1rem;
+      margin-left: 0.75rem;
     }
     .meal-card.open .card-toggle { transform: rotate(180deg); }
 
@@ -277,34 +461,28 @@
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.35s ease;
-      border-top: 0px solid #e0e0e0;
     }
     .meal-card.open .card-body {
       max-height: 2000px;
-      border-top-width: 1px;
+      border-top: 1px solid #e8e4e0;
     }
-    .card-body-inner {
-      padding: 1rem 1.1rem 1.2rem;
-    }
+    .card-body-inner { padding: 1rem 1.1rem 1.2rem; }
 
     .section-title {
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 0.78rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #888;
+      letter-spacing: 0.07em;
+      color: #bbb;
       margin-bottom: 0.6rem;
     }
-    .recipe-steps {
-      list-style: none;
-      counter-reset: steps;
-    }
+    .recipe-steps { list-style: none; counter-reset: steps; }
     .recipe-steps li {
       counter-increment: steps;
       display: flex;
       gap: 0.6rem;
       font-size: 0.92rem;
-      line-height: 1.5;
+      line-height: 1.55;
       margin-bottom: 0.5rem;
       color: #333;
     }
@@ -316,12 +494,12 @@
       background: #e8621a;
       color: #fff;
       border-radius: 50%;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 0.1rem;
+      margin-top: 0.15rem;
     }
 
     .veggie-alt {
@@ -330,24 +508,22 @@
       background: #f0faf0;
       border-left: 3px solid #66bb6a;
       padding: 0.5rem 0.75rem;
-      border-radius: 0 5px 5px 0;
+      border-radius: 0 6px 6px 0;
       margin: 0.75rem 0;
     }
     .veggie-alt strong { color: #2e7d32; }
 
     .divider {
       border: none;
-      border-top: 1px solid #eee;
+      border-top: 1px solid #f0ece8;
       margin: 0.85rem 0;
     }
 
-    .shopping-list {
-      list-style: none;
-    }
+    .shopping-list { list-style: none; }
     .shopping-list li {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.55rem;
       padding: 0.3rem 0;
       font-size: 0.9rem;
       color: #333;
@@ -359,29 +535,31 @@
       cursor: pointer;
       flex-shrink: 0;
     }
-    .item-text { flex: 1; }
-    .item-amount { font-size: 0.82rem; color: #888; flex-shrink: 0; }
+    .item-text { flex: 1; min-width: 0; }
+    .item-amount { font-size: 0.8rem; color: #aaa; flex-shrink: 0; }
     .item-price {
-      font-size: 0.8rem;
-      color: #aaa;
+      font-size: 0.78rem;
+      color: #ccc;
       flex-shrink: 0;
-      min-width: 45px;
+      min-width: 42px;
       text-align: right;
     }
 
     .card-price {
       text-align: right;
       font-size: 0.82rem;
-      color: #888;
+      color: #aaa;
       margin-top: 0.75rem;
     }
     .card-price strong { color: #e8621a; }
 
+    /* ── COMBINED LIST ───────────────────────────────────────────────────── */
     .combined-list-section {
-      margin-top: 1.5rem;
-      border: 1px solid #e0e0e0;
-      border-radius: 10px;
+      margin-top: 1.25rem;
+      border: 1px solid #e8e4e0;
+      border-radius: 12px;
       overflow: hidden;
+      background: #fff;
     }
     .combined-list-header {
       display: flex;
@@ -393,8 +571,8 @@
       user-select: none;
     }
     .combined-list-header h3 {
-      font-size: 1rem;
-      font-weight: 600;
+      font-size: 0.95rem;
+      font-weight: 700;
       color: #222;
     }
     .combined-list-body {
@@ -405,13 +583,13 @@
     .combined-list-section.open .combined-list-body { max-height: 3000px; }
     .combined-list-section.open .combined-list-header .card-toggle { transform: rotate(180deg); }
 
-    .category-group { padding: 0.75rem 1.1rem; border-top: 1px solid #eee; }
+    .category-group { padding: 0.75rem 1.1rem; border-top: 1px solid #f0ece8; }
     .category-group:first-child { border-top: none; }
     .category-title {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.07em;
       color: #e8621a;
       margin-bottom: 0.4rem;
     }
@@ -419,29 +597,56 @@
     .new-plan-btn {
       display: block;
       width: 100%;
-      padding: 0.75rem;
+      padding: 0.8rem;
       background: #fff;
       color: #e8621a;
       border: 2px solid #e8621a;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 0.95rem;
-      font-weight: 600;
+      font-weight: 700;
       font-family: inherit;
       cursor: pointer;
-      margin-top: 1.5rem;
+      margin-top: 1.25rem;
       transition: background 0.15s;
+      touch-action: manipulation;
     }
     .new-plan-btn:hover { background: #fdf5f1; }
 
     [hidden] { display: none !important; }
+
+    /* ── MOBILE ──────────────────────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.7rem; }
+
+      fieldset { padding: 0.9rem 1rem; }
+
+      .field-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+      }
+      label.field-label { min-width: unset; }
+
+      input[type="text"] { width: 100%; }
+
+      .submit-btn { font-size: 1rem; padding: 0.95rem 1rem; }
+
+      .card-name { font-size: 0.95rem; }
+
+      .shopping-list li { font-size: 0.85rem; }
+
+      .results-header { flex-direction: column; gap: 0.2rem; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
 
     <header>
-      <h1>🍲 Middagsplanlegger</h1>
-      <p>Lag en ukesmeny tilpasset din familie</p>
+      <div class="logo">
+        <h1>🍲 Stormat</h1>
+      </div>
+      <p>Personlig ukesmeny for din familie</p>
     </header>
 
     <!-- SKJEMA -->
@@ -456,16 +661,28 @@
             <input type="number" id="antallMiddager" name="days" min="1" max="7" value="5">
           </div>
 
-          <div class="field-row">
-            <label class="field-label" for="personer">Antall personer</label>
-            <input type="number" id="personer" name="persons" min="1" max="10" value="4">
-          </div>
-
-          <div class="field-row" style="align-items:flex-start; flex-direction:column; gap:0.3rem;">
-            <span style="font-size:0.9rem; color:#444;">Alder i husstanden</span>
-            <div class="check-group">
-              <label><input type="checkbox" name="ages" value="voksen" checked> Voksen</label>
-              <label><input type="checkbox" name="ages" value="barn"> Barn</label>
+          <!-- Voksne / Barn -->
+          <div style="margin-top: 0.9rem;">
+            <span style="display:block; font-size:0.9rem; color:#555; margin-bottom:0.5rem; font-weight:500;">Hvem spiser?</span>
+            <div class="person-row">
+              <div class="person-box">
+                <span class="person-box-label">Voksne</span>
+                <span class="person-box-sub">13 år +</span>
+                <div class="person-counter">
+                  <button type="button" class="counter-btn" data-target="adults" data-delta="-1">−</button>
+                  <input type="number" id="adults" name="adults" value="2" min="0" max="10" readonly>
+                  <button type="button" class="counter-btn" data-target="adults" data-delta="1">+</button>
+                </div>
+              </div>
+              <div class="person-box">
+                <span class="person-box-label">Barn</span>
+                <span class="person-box-sub">under 13 år</span>
+                <div class="person-counter">
+                  <button type="button" class="counter-btn" data-target="children" data-delta="-1">−</button>
+                  <input type="number" id="children" name="children" value="0" min="0" max="10" readonly>
+                  <button type="button" class="counter-btn" data-target="children" data-delta="1">+</button>
+                </div>
+              </div>
             </div>
           </div>
         </fieldset>
@@ -490,7 +707,7 @@
           <legend>Tilberedning</legend>
 
           <div style="margin-top:0.5rem;">
-            <span style="display:block; font-size:0.9rem; color:#444; margin-bottom:0.4rem;">Maks tilberedningstid</span>
+            <span style="display:block; font-size:0.9rem; color:#555; margin-bottom:0.4rem;">Maks tilberedningstid</span>
             <div class="radio-group">
               <label><input type="radio" name="cookTime" value="15"> 15 min</label>
               <label><input type="radio" name="cookTime" value="30" checked> 30 min</label>
@@ -500,7 +717,7 @@
           </div>
 
           <div style="margin-top:0.8rem;">
-            <span style="display:block; font-size:0.9rem; color:#444; margin-bottom:0.4rem;">Vanskelighetsgrad</span>
+            <span style="display:block; font-size:0.9rem; color:#555; margin-bottom:0.4rem;">Vanskelighetsgrad</span>
             <div class="radio-group">
               <label><input type="radio" name="difficulty" value="enkel" checked> Enkel</label>
               <label><input type="radio" name="difficulty" value="avansert"> Avansert</label>
@@ -532,46 +749,48 @@
             </label>
           </div>
 
-          <div class="field-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; margin-top:0.8rem;">
-            <label style="font-size:0.9rem; color:#444;" for="likerSpesielt">Liker spesielt</label>
+          <div class="field-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; margin-top:0.9rem;">
+            <label style="font-size:0.9rem; color:#555;" for="likerSpesielt">Liker spesielt</label>
             <input type="text" id="likerSpesielt" name="likesEspecially" placeholder="f.eks. fisk, pasta, indisk..." value="fisk">
           </div>
 
-          <div class="field-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; margin-top:0.8rem;">
-            <label style="font-size:0.9rem; color:#444;" for="vilIkkeHa">Vil ikke ha</label>
+          <div class="field-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; margin-top:0.75rem;">
+            <label style="font-size:0.9rem; color:#555;" for="vilIkkeHa">Vil ikke ha</label>
             <input type="text" id="vilIkkeHa" name="dontWant" placeholder="f.eks. innmat, bønner...">
           </div>
         </fieldset>
 
         <div id="form-error" class="error-msg" hidden></div>
 
-        <button type="submit" class="submit-btn" id="submit-btn">
-          Generer ukemeny
-        </button>
+        <div class="submit-wrapper">
+          <button type="submit" class="submit-btn" id="submit-btn">
+            Lag vår ukesmeny →
+          </button>
+          <p class="btn-tagline">
+            Vi leser preferansene dine · tilpasser for hele familien · henter
+            ferske priser fra norske butikker · og setter sammen et forslag
+            100&nbsp;% skreddersydd til dere.
+          </p>
+        </div>
       </form>
     </section>
 
     <!-- LASTER -->
     <section id="loading-section" class="loading-section" hidden>
-      <svg width="100" height="120" viewBox="0 0 100 120" aria-hidden="true" style="overflow:visible;">
-        <!-- Dampbobler -->
+      <svg width="90" height="110" viewBox="0 0 100 120" aria-hidden="true" style="overflow:visible;">
         <g transform="translate(50, 22)">
           <ellipse class="bubble" cx="-14" cy="0" rx="4" ry="5" fill="#e8621a" opacity="0.7"/>
           <ellipse class="bubble" cx="0"   cy="4" rx="4" ry="5" fill="#e8621a" opacity="0.7"/>
           <ellipse class="bubble" cx="14"  cy="0" rx="4" ry="5" fill="#e8621a" opacity="0.7"/>
         </g>
-        <!-- Lokk -->
         <ellipse cx="50" cy="52" rx="34" ry="8" fill="#d4561a"/>
         <rect x="43" y="44" width="14" height="9" rx="4" fill="#b84a15"/>
-        <!-- Gryte kropp -->
         <path d="M18 56 Q16 82 22 94 L78 94 Q84 82 82 56 Z" fill="#e8621a"/>
-        <!-- Bunn -->
         <ellipse cx="50" cy="94" rx="28" ry="6" fill="#d4561a"/>
-        <!-- Håndtak -->
         <path d="M18 62 Q8 62 8 72 Q8 80 18 80" stroke="#c45018" stroke-width="5" fill="none" stroke-linecap="round"/>
         <path d="M82 62 Q92 62 92 72 Q92 80 82 80" stroke="#c45018" stroke-width="5" fill="none" stroke-linecap="round"/>
       </svg>
-      <p>Planlegger ukens middager&hellip;</p>
+      <div class="loading-steps" id="loading-steps"></div>
     </section>
 
     <!-- RESULTATER -->
@@ -593,7 +812,7 @@
         </div>
       </div>
 
-      <button class="new-plan-btn" id="new-plan-btn">← Lag ny ukemeny</button>
+      <button class="new-plan-btn" id="new-plan-btn">← Lag ny ukesmeny</button>
     </section>
 
   </div>
@@ -612,12 +831,24 @@
     const resultsTotal   = document.getElementById('results-total');
     const newPlanBtn     = document.getElementById('new-plan-btn');
 
+    // ── Person counters ───────────────────────────────────────────────────
+    document.querySelectorAll('.counter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        const delta  = parseInt(btn.dataset.delta);
+        const input  = document.getElementById(target);
+        const newVal = Math.max(0, Math.min(10, parseInt(input.value) + delta));
+        input.value  = newVal;
+      });
+    });
+
+    // ── Build query params ────────────────────────────────────────────────
     function buildParams(f) {
       const p = new URLSearchParams();
-      p.set('days',    f.querySelector('[name="days"]').value);
-      p.set('persons', f.querySelector('[name="persons"]').value);
+      p.set('days',     f.querySelector('[name="days"]').value);
+      p.set('adults',   f.querySelector('[name="adults"]').value);
+      p.set('children', f.querySelector('[name="children"]').value);
 
-      f.querySelectorAll('[name="ages"]:checked').forEach(el => p.append('ages', el.value));
       f.querySelectorAll('[name="allergies"]:checked').forEach(el => p.append('allergies', el.value));
 
       p.set('cookTime',        f.querySelector('[name="cookTime"]:checked').value);
@@ -630,6 +861,62 @@
       return p;
     }
 
+    // ── Loading animation ─────────────────────────────────────────────────
+    const LOADING_STEPS = [
+      'Leser preferansene dine…',
+      'Tilpasser porsjoner og kosthold for familien…',
+      'Sjekker ferske priser i norske butikker…',
+      'Setter sammen din personlige ukesmeny…',
+    ];
+
+    let stepTimers = [];
+
+    function startLoadingAnimation(adults, children) {
+      const stepsEl = document.getElementById('loading-steps');
+      const familyText = buildFamilyText(adults, children);
+      const steps = [
+        'Leser preferansene dine…',
+        `Tilpasser for ${familyText}…`,
+        'Sjekker ferske priser i norske butikker…',
+        'Setter sammen din personlige ukesmeny…',
+      ];
+
+      stepsEl.innerHTML = steps.map((text, i) =>
+        `<div class="step-item" id="step-${i}">
+          <div class="step-dot"></div>
+          <span class="step-text">${text}</span>
+        </div>`
+      ).join('');
+
+      stepTimers.forEach(clearTimeout);
+      stepTimers = [];
+
+      steps.forEach((_, i) => {
+        const t = setTimeout(() => {
+          document.getElementById(`step-${i}`)?.classList.add('active');
+          if (i > 0) {
+            document.getElementById(`step-${i - 1}`)?.classList.remove('active');
+            document.getElementById(`step-${i - 1}`)?.classList.add('visible');
+          }
+          if (i === steps.length - 1) {
+            setTimeout(() => {
+              document.getElementById(`step-${i}`)?.classList.remove('active');
+              document.getElementById(`step-${i}`)?.classList.add('visible');
+            }, 800);
+          }
+        }, i * 900);
+        stepTimers.push(t);
+      });
+    }
+
+    function buildFamilyText(adults, children) {
+      const parts = [];
+      if (adults > 0) parts.push(`${adults} voksen${adults > 1 ? 'e' : ''}`);
+      if (children > 0) parts.push(`${children} barn`);
+      return parts.length ? parts.join(' og ') : 'familien';
+    }
+
+    // ── Render helpers ────────────────────────────────────────────────────
     function typeIcon(type) {
       return type === 'fish' ? '🐟' : type === 'vegetarian' ? '🥦' : '🥩';
     }
@@ -644,11 +931,11 @@
       const tags = [
         `<span class="tag">${typeIcon(meal.type)} ${typeLabel(meal.type)}</span>`,
         `<span class="tag">⏱ ${meal.prepTime} min</span>`,
-        meal.leftoverFriendly ? `<span class="tag leftovers">♻️ Restemat</span>` : ''
+        meal.leftoverFriendly ? `<span class="tag leftovers">♻️ Restemat</span>` : '',
       ].join('');
 
-      const stepsHtml = meal.recipe.steps.map(s => `<li>${s}</li>`).join('');
-      const veggieHtml = meal.vegetarianAlternative
+      const stepsHtml   = meal.recipe.steps.map(s => `<li>${s}</li>`).join('');
+      const veggieHtml  = meal.vegetarianAlternative
         ? `<p class="veggie-alt"><strong>Vegetarisk:</strong> ${meal.vegetarianAlternative}</p>` : '';
 
       const shoppingHtml = meal.shoppingList.map((item, i) => {
@@ -660,6 +947,8 @@
           <span class="item-price">kr ${item.estimatedPrice}</span>
         </li>`;
       }).join('');
+
+      const mealTotal = meal.shoppingList.reduce((s, i) => s + (i.estimatedPrice || 0), 0);
 
       card.innerHTML = `
         <div class="card-header" role="button" aria-expanded="${idx === 0}">
@@ -678,7 +967,7 @@
             <hr class="divider">
             <p class="section-title">Ingredienser</p>
             <ul class="shopping-list">${shoppingHtml}</ul>
-            <p class="card-price">Estimert pris: <strong>kr ${meal.totalPrice}</strong></p>
+            <p class="card-price">Estimert pris: <strong>kr ${mealTotal}</strong></p>
           </div>
         </div>`;
 
@@ -687,12 +976,10 @@
         card.querySelector('.card-header').setAttribute('aria-expanded', isOpen);
       });
 
-      // Strikethrough ved avkryssing
       card.querySelectorAll('.shopping-list input').forEach(cb => {
         cb.addEventListener('change', () => {
-          const lbl = cb.nextElementSibling;
-          lbl.style.textDecoration = cb.checked ? 'line-through' : '';
-          lbl.style.color          = cb.checked ? '#aaa' : '';
+          cb.nextElementSibling.style.textDecoration = cb.checked ? 'line-through' : '';
+          cb.nextElementSibling.style.color          = cb.checked ? '#bbb' : '';
         });
       });
 
@@ -721,17 +1008,15 @@
         </div>`;
       }).join('');
 
-      html += `<div style="padding:0.75rem 1.1rem 1rem; text-align:right; font-size:0.9rem; color:#666; border-top:1px solid #eee;">
+      html += `<div style="padding:0.75rem 1.1rem 1rem; text-align:right; font-size:0.88rem; color:#888; border-top:1px solid #f0ece8;">
         Total estimert handlekostnad: <strong style="color:#e8621a;">kr ${totalPrice}</strong>
       </div>`;
 
       combinedInner.innerHTML = html;
-
       combinedInner.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         cb.addEventListener('change', () => {
-          const lbl = cb.nextElementSibling;
-          lbl.style.textDecoration = cb.checked ? 'line-through' : '';
-          lbl.style.color          = cb.checked ? '#aaa' : '';
+          cb.nextElementSibling.style.textDecoration = cb.checked ? 'line-through' : '';
+          cb.nextElementSibling.style.color          = cb.checked ? '#bbb' : '';
         });
       });
     }
@@ -741,13 +1026,17 @@
       data.meals.forEach((meal, i) => mealsContainer.appendChild(buildMealCard(meal, i)));
       buildCombinedList(data.shoppingList, data.totalPrice);
 
-      document.getElementById('results-title').textContent = `${data.meta.days} middager planlagt`;
+      const adults   = parseInt(form.querySelector('[name="adults"]').value);
+      const children = parseInt(form.querySelector('[name="children"]').value);
+      document.getElementById('results-title').textContent =
+        `${data.meta.days} middager for ${buildFamilyText(adults, children)}`;
       resultsTotal.innerHTML = `Totalt <strong>kr ${data.totalPrice}</strong>`;
 
-      loadingSection.hidden = true;
-      resultsSection.hidden = false;
+      loadingSection.hidden  = true;
+      resultsSection.hidden  = false;
     }
 
+    // ── Event listeners ───────────────────────────────────────────────────
     document.getElementById('combined-list-toggle').addEventListener('click', () => {
       document.getElementById('combined-list-section').classList.toggle('open');
     });
@@ -760,22 +1049,36 @@
 
     form.addEventListener('submit', async e => {
       e.preventDefault();
-      formError.hidden  = true;
+      formError.hidden   = true;
       submitBtn.disabled = true;
+
+      const adults   = parseInt(form.querySelector('[name="adults"]').value);
+      const children = parseInt(form.querySelector('[name="children"]').value);
+
+      if (adults + children < 1) {
+        formError.textContent = 'Legg til minst én person (voksen eller barn).';
+        formError.hidden      = false;
+        submitBtn.disabled    = false;
+        return;
+      }
 
       const params = buildParams(form);
       formSection.hidden    = true;
       loadingSection.hidden = false;
 
+      startLoadingAnimation(adults, children);
+
       try {
         const res = await fetch(`${API}?${params}`);
         if (!res.ok) throw new Error(`Server svarte med ${res.status}`);
         const data = await res.json();
+        // Minimum 3 s lastetid for å fullføre animasjonen
+        await new Promise(r => setTimeout(r, Math.max(0, 3000 - Date.now() % 3000)));
         renderResults(data);
       } catch (err) {
-        loadingSection.hidden = false;
-        formSection.hidden    = false;
+        stepTimers.forEach(clearTimeout);
         loadingSection.hidden = true;
+        formSection.hidden    = false;
         formError.textContent = `Noe gikk galt: ${err.message}. Prøv igjen.`;
         formError.hidden      = false;
         submitBtn.disabled    = false;

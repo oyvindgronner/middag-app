@@ -23,7 +23,7 @@
     /* ── HEADER ─────────────────────────────────────────────────────────── */
     header {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1.25rem;
     }
     .logo {
       display: inline-flex;
@@ -41,6 +41,33 @@
       color: #888;
       font-size: 0.92rem;
     }
+
+    /* ── VALUE STRIP ────────────────────────────────────────────────────── */
+    .value-strip {
+      background: linear-gradient(135deg, #fff8f4 0%, #fff3ee 100%);
+      border: 1px solid #f5ddd0;
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-size: 0.84rem;
+      color: #666;
+      line-height: 1.6;
+    }
+    .value-strip strong { color: #e8621a; }
+
+    /* ── ALLERGEN DISCLAIMER ────────────────────────────────────────────── */
+    .allergen-disclaimer {
+      background: #fffbeb;
+      border: 1px solid #f59e0b;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.83rem;
+      color: #78350f;
+      line-height: 1.55;
+    }
+    .allergen-disclaimer strong { color: #92400e; }
 
     /* ── FIELDSET / FORM ─────────────────────────────────────────────────── */
     fieldset {
@@ -204,48 +231,31 @@
       flex-shrink: 0;
     }
 
-    /* ── TOGGLE ──────────────────────────────────────────────────────────── */
-    .toggle-row {
+    /* ── KOSTHOLD COUNTERS (3-delt grid) ────────────────────────────────── */
+    .diet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+    }
+    .diet-box {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      margin-top: 0.85rem;
-      gap: 1rem;
+      gap: 0.35rem;
+      background: #fafaf8;
+      border: 1px solid #e8e4e0;
+      border-radius: 10px;
+      padding: 0.65rem 0.4rem;
     }
-    .toggle-label {
-      font-size: 0.9rem;
+    .diet-box-icon { font-size: 1.2rem; }
+    .diet-box-label {
+      font-size: 0.72rem;
+      font-weight: 600;
       color: #555;
+      text-align: center;
+      line-height: 1.3;
     }
-    .toggle {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 26px;
-      flex-shrink: 0;
-    }
-    .toggle input { display: none; }
-    .slider {
-      position: absolute;
-      inset: 0;
-      background: #ddd;
-      border-radius: 26px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .slider::before {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      left: 3px;
-      top: 3px;
-      background: #fff;
-      border-radius: 50%;
-      transition: transform 0.2s;
-      box-shadow: 0 1px 3px rgba(0,0,0,.15);
-    }
-    .toggle input:checked + .slider { background: #e8621a; }
-    .toggle input:checked + .slider::before { transform: translateX(18px); }
 
     /* ── SUBMIT BUTTON ───────────────────────────────────────────────────── */
     .submit-wrapper {
@@ -396,6 +406,41 @@
     }
     .total-price strong { color: #e8621a; }
 
+    /* ── RESULT ACTION BUTTONS ───────────────────────────────────────────── */
+    .result-actions {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1rem;
+      border: 1.5px solid #e8e4e0;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: #555;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+      touch-action: manipulation;
+    }
+    .action-btn:hover {
+      background: #fdf5f1;
+      border-color: #e8621a;
+      color: #e8621a;
+    }
+    .action-btn.copied {
+      background: #e8f5e9;
+      border-color: #66bb6a;
+      color: #2e7d32;
+    }
+
+    /* ── MEAL CARD ───────────────────────────────────────────────────────── */
     .meal-card {
       border: 1px solid #e8e4e0;
       border-radius: 12px;
@@ -456,6 +501,32 @@
       margin-left: 0.75rem;
     }
     .meal-card.open .card-toggle { transform: rotate(180deg); }
+
+    /* ── REORDER BUTTONS ─────────────────────────────────────────────────── */
+    .reorder-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+    }
+    .reorder-btn {
+      width: 26px;
+      height: 22px;
+      background: #f5f0eb;
+      border: 1px solid #e8e4e0;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: #999;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.1s, color 0.1s;
+      touch-action: manipulation;
+    }
+    .reorder-btn:hover { background: #ffe5d5; color: #e8621a; border-color: #e8621a; }
+    .reorder-btn:disabled { opacity: 0.3; cursor: default; }
 
     .card-body {
       max-height: 0;
@@ -681,25 +752,32 @@
     /* ── MOBILE ──────────────────────────────────────────────────────────── */
     @media (max-width: 480px) {
       header h1 { font-size: 1.7rem; }
-
       fieldset { padding: 0.9rem 1rem; }
-
       .field-row {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.4rem;
       }
       label.field-label { min-width: unset; }
-
       input[type="text"] { width: 100%; }
-
       .submit-btn { font-size: 1rem; padding: 0.95rem 1rem; }
-
       .card-name { font-size: 0.95rem; }
-
       .shopping-list li { font-size: 0.85rem; }
-
       .results-header { flex-direction: column; gap: 0.2rem; }
+      .diet-grid { grid-template-columns: 1fr 1fr 1fr; gap: 0.4rem; }
+      .diet-box-label { font-size: 0.65rem; }
+    }
+
+    /* ── PRINT ───────────────────────────────────────────────────────────── */
+    @media print {
+      body { background: #fff; font-size: 12pt; }
+      .container { max-width: 100%; padding: 0; }
+      .result-actions, .new-plan-btn, .store-comparison { display: none !important; }
+      .meal-card { break-inside: avoid; border: 1px solid #ccc; margin-bottom: 12pt; }
+      .card-body { max-height: none !important; }
+      .card-toggle, .reorder-btns { display: none !important; }
+      .combined-list-section { break-before: page; }
+      .combined-list-body { max-height: none !important; }
     }
   </style>
 </head>
@@ -712,6 +790,16 @@
       </div>
       <p>Personlig ukesmeny for din familie</p>
     </header>
+
+    <!-- VERDI-TEKST -->
+    <div class="value-strip">
+      <strong>Slik fungerer det:</strong> Vi leser preferansene dine · tilpasser for hele familien · henter ferske priser fra norske butikker · og setter sammen et forslag 100&nbsp;% skreddersydd til dere.
+    </div>
+
+    <!-- ALLERGIDISCLAIMER -->
+    <div class="allergen-disclaimer">
+      ⚠️ <strong>Viktig om allergier:</strong> Oppskriftsforslagene filtreres basert på dine valg, men vi anbefaler alltid at du kontrollerer ingrediensene selv — særlig ved alvorlige allergier eller intoleranser. Produkter kan inneholde spor av allergener som ikke fremgår av oppskriften.
+    </div>
 
     <!-- SKJEMA -->
     <section id="form-section">
@@ -784,15 +872,18 @@
             <span style="display:block; font-size:0.9rem; color:#555; margin-bottom:0.4rem;">Vanskelighetsgrad</span>
             <div class="radio-group">
               <label><input type="radio" name="difficulty" value="enkel" checked> Enkel</label>
+              <label><input type="radio" name="difficulty" value="middels"> Middels</label>
               <label><input type="radio" name="difficulty" value="avansert"> Avansert</label>
             </div>
           </div>
 
-          <div class="toggle-row">
-            <span class="toggle-label">Restemat-vennlig</span>
-            <label class="toggle">
-              <input type="checkbox" name="leftovers" value="true">
-              <span class="slider"></span>
+          <div style="margin-top:0.8rem; display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+            <span style="font-size:0.9rem; color:#555;">Restemat-vennlig</span>
+            <label style="position:relative; display:inline-block; width:44px; height:26px; flex-shrink:0;">
+              <input type="checkbox" name="leftovers" value="true" style="display:none;">
+              <span style="position:absolute; inset:0; background:#ddd; border-radius:26px; cursor:pointer; transition:background 0.2s;">
+                <span style="position:absolute; width:20px; height:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform 0.2s; box-shadow:0 1px 3px rgba(0,0,0,.15);"></span>
+              </span>
             </label>
           </div>
         </fieldset>
@@ -800,22 +891,41 @@
         <fieldset>
           <legend>Kosthold</legend>
 
-          <div class="field-row">
-            <label class="field-label" for="fiskemiddager">Fiskemiddager per uke</label>
-            <input type="number" id="fiskemiddager" name="fishPerWeek" min="0" max="7" value="2">
-          </div>
+          <span style="display:block; font-size:0.85rem; color:#888; margin-bottom:0.6rem;">Antall dager per uke</span>
 
-          <div class="toggle-row">
-            <span class="toggle-label">Alltid vegetarisk alternativ</span>
-            <label class="toggle">
-              <input type="checkbox" name="vegetarian" value="true" checked>
-              <span class="slider"></span>
-            </label>
+          <div class="diet-grid">
+            <div class="diet-box">
+              <span class="diet-box-icon">🐟</span>
+              <span class="diet-box-label">Fisk&shy;middager</span>
+              <div class="person-counter" style="margin-top:0.25rem;">
+                <button type="button" class="counter-btn" data-target="fishPerWeek" data-delta="-1">−</button>
+                <input type="number" id="fishPerWeek" name="fishPerWeek" value="2" min="0" max="7" readonly>
+                <button type="button" class="counter-btn" data-target="fishPerWeek" data-delta="1">+</button>
+              </div>
+            </div>
+            <div class="diet-box">
+              <span class="diet-box-icon">🥦</span>
+              <span class="diet-box-label">Vegetar&shy;dager</span>
+              <div class="person-counter" style="margin-top:0.25rem;">
+                <button type="button" class="counter-btn" data-target="vegetarianPerWeek" data-delta="-1">−</button>
+                <input type="number" id="vegetarianPerWeek" name="vegetarianPerWeek" value="1" min="0" max="7" readonly>
+                <button type="button" class="counter-btn" data-target="vegetarianPerWeek" data-delta="1">+</button>
+              </div>
+            </div>
+            <div class="diet-box">
+              <span class="diet-box-icon">🌱</span>
+              <span class="diet-box-label">Veganske&shy;dager</span>
+              <div class="person-counter" style="margin-top:0.25rem;">
+                <button type="button" class="counter-btn" data-target="veganPerWeek" data-delta="-1">−</button>
+                <input type="number" id="veganPerWeek" name="veganPerWeek" value="0" min="0" max="7" readonly>
+                <button type="button" class="counter-btn" data-target="veganPerWeek" data-delta="1">+</button>
+              </div>
+            </div>
           </div>
 
           <div class="field-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; margin-top:0.9rem;">
             <label style="font-size:0.9rem; color:#555;" for="likerSpesielt">Liker spesielt</label>
-            <input type="text" id="likerSpesielt" name="likesEspecially" placeholder="f.eks. fisk, pasta, indisk..." value="fisk">
+            <input type="text" id="likerSpesielt" name="likesEspecially" placeholder="f.eks. fisk, pasta, indisk...">
           </div>
 
           <div class="field-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; margin-top:0.75rem;">
@@ -830,11 +940,7 @@
           <button type="submit" class="submit-btn" id="submit-btn">
             Lag vår ukesmeny →
           </button>
-          <p class="btn-tagline">
-            Vi leser preferansene dine · tilpasser for hele familien · henter
-            ferske priser fra norske butikker · og setter sammen et forslag
-            100&nbsp;% skreddersydd til dere.
-          </p>
+          <p class="btn-tagline">Personlig tilpasset · ferske priser · hele familien</p>
         </div>
       </form>
     </section>
@@ -862,6 +968,11 @@
       <div class="results-header">
         <h2 id="results-title">Ukens middager</h2>
         <span class="total-price" id="results-total"></span>
+      </div>
+
+      <div class="result-actions">
+        <button class="action-btn" id="print-btn">🖨️ Skriv ut / PDF</button>
+        <button class="action-btn" id="share-btn">📤 Del med familien</button>
       </div>
 
       <div id="meals-container"></div>
@@ -897,13 +1008,26 @@
     const resultsTotal   = document.getElementById('results-total');
     const newPlanBtn     = document.getElementById('new-plan-btn');
 
-    // ── Person counters ───────────────────────────────────────────────────
+    // Holder state for hele resultatet (brukes til deling og resortering)
+    let currentData = null;
+
+    // ── Toggle slider (restemat) ──────────────────────────────────────────
+    document.querySelectorAll('label input[type="checkbox"][name="leftovers"]').forEach(cb => {
+      const slider = cb.nextElementSibling;
+      const dot    = slider.querySelector('span');
+      cb.addEventListener('change', () => {
+        slider.style.background = cb.checked ? '#e8621a' : '#ddd';
+        dot.style.transform     = cb.checked ? 'translateX(18px)' : '';
+      });
+    });
+
+    // ── Person / kosthold counters ────────────────────────────────────────
     document.querySelectorAll('.counter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const target = btn.dataset.target;
         const delta  = parseInt(btn.dataset.delta);
         const input  = document.getElementById(target);
-        const newVal = Math.max(0, Math.min(10, parseInt(input.value) + delta));
+        const newVal = Math.max(parseInt(input.min) || 0, Math.min(parseInt(input.max) || 10, parseInt(input.value) + delta));
         input.value  = newVal;
       });
     });
@@ -911,30 +1035,24 @@
     // ── Build query params ────────────────────────────────────────────────
     function buildParams(f) {
       const p = new URLSearchParams();
-      p.set('days',     f.querySelector('[name="days"]').value);
-      p.set('adults',   f.querySelector('[name="adults"]').value);
-      p.set('children', f.querySelector('[name="children"]').value);
+      p.set('days',               f.querySelector('[name="days"]').value);
+      p.set('adults',             f.querySelector('[name="adults"]').value);
+      p.set('children',           f.querySelector('[name="children"]').value);
 
       f.querySelectorAll('[name="allergies"]:checked').forEach(el => p.append('allergies', el.value));
 
-      p.set('cookTime',        f.querySelector('[name="cookTime"]:checked').value);
-      p.set('difficulty',      f.querySelector('[name="difficulty"]:checked').value);
-      p.set('leftovers',       f.querySelector('[name="leftovers"]').checked ? 'true' : 'false');
-      p.set('fishPerWeek',     f.querySelector('[name="fishPerWeek"]').value);
-      p.set('vegetarian',      f.querySelector('[name="vegetarian"]').checked ? 'true' : 'false');
-      p.set('likesEspecially', f.querySelector('[name="likesEspecially"]').value);
-      p.set('dontWant',        f.querySelector('[name="dontWant"]').value);
+      p.set('cookTime',           f.querySelector('[name="cookTime"]:checked').value);
+      p.set('difficulty',         f.querySelector('[name="difficulty"]:checked').value);
+      p.set('leftovers',          f.querySelector('[name="leftovers"]').checked ? 'true' : 'false');
+      p.set('fishPerWeek',        f.querySelector('[name="fishPerWeek"]').value);
+      p.set('vegetarianPerWeek',  f.querySelector('[name="vegetarianPerWeek"]').value);
+      p.set('veganPerWeek',       f.querySelector('[name="veganPerWeek"]').value);
+      p.set('likesEspecially',    f.querySelector('[name="likesEspecially"]').value);
+      p.set('dontWant',           f.querySelector('[name="dontWant"]').value);
       return p;
     }
 
     // ── Loading animation ─────────────────────────────────────────────────
-    const LOADING_STEPS = [
-      'Leser preferansene dine…',
-      'Tilpasser porsjoner og kosthold for familien…',
-      'Sjekker ferske priser i norske butikker…',
-      'Setter sammen din personlige ukesmeny…',
-    ];
-
     let stepTimers = [];
 
     function startLoadingAnimation(adults, children) {
@@ -984,24 +1102,27 @@
 
     // ── Render helpers ────────────────────────────────────────────────────
     function typeIcon(type) {
-      return type === 'fish' ? '🐟' : type === 'vegetarian' ? '🥦' : '🥩';
+      return { fish: '🐟', vegetarian: '🥦', vegan: '🌱', meat: '🥩' }[type] ?? '🍽️';
     }
     function typeLabel(type) {
-      return type === 'fish' ? 'Fisk' : type === 'vegetarian' ? 'Vegetar' : 'Kjøtt';
+      return { fish: 'Fisk', vegetarian: 'Vegetar', vegan: 'Vegansk', meat: 'Kjøtt' }[type] ?? type;
     }
 
-    function buildMealCard(meal, idx) {
+    function buildMealCard(meal, idx, totalMeals) {
       const card = document.createElement('article');
       card.className = 'meal-card' + (idx === 0 ? ' open' : '');
+      card.dataset.idx = idx;
 
       const tags = [
         `<span class="tag">${typeIcon(meal.type)} ${typeLabel(meal.type)}</span>`,
         `<span class="tag">⏱ ${meal.prepTime} min</span>`,
         meal.leftoverFriendly ? `<span class="tag leftovers">♻️ Restemat</span>` : '',
+        meal.difficulty === 'middels' ? `<span class="tag">★★ Middels</span>` : '',
+        meal.difficulty === 'avansert' ? `<span class="tag">★★★ Avansert</span>` : '',
       ].join('');
 
-      const stepsHtml   = meal.recipe.steps.map(s => `<li>${s}</li>`).join('');
-      const veggieHtml  = meal.vegetarianAlternative
+      const stepsHtml  = meal.recipe.steps.map(s => `<li>${s}</li>`).join('');
+      const veggieHtml = meal.vegetarianAlternative
         ? `<p class="veggie-alt"><strong>Vegetarisk:</strong> ${meal.vegetarianAlternative}</p>` : '';
 
       const shoppingHtml = meal.shoppingList.map((item, i) => {
@@ -1018,6 +1139,10 @@
 
       card.innerHTML = `
         <div class="card-header" role="button" aria-expanded="${idx === 0}">
+          <div class="reorder-btns">
+            <button class="reorder-btn reorder-up" title="Flytt opp" ${idx === 0 ? 'disabled' : ''}>▲</button>
+            <button class="reorder-btn reorder-down" title="Flytt ned" ${idx === totalMeals - 1 ? 'disabled' : ''}>▼</button>
+          </div>
           <div class="card-header-left">
             <span class="card-day">${meal.day}</span>
             <span class="card-name">${meal.name}</span>
@@ -1037,11 +1162,24 @@
           </div>
         </div>`;
 
-      card.querySelector('.card-header').addEventListener('click', () => {
+      // Toggle expand
+      card.querySelector('.card-header').addEventListener('click', e => {
+        if (e.target.closest('.reorder-btns')) return;
         const isOpen = card.classList.toggle('open');
         card.querySelector('.card-header').setAttribute('aria-expanded', isOpen);
       });
 
+      // Reorder buttons
+      card.querySelector('.reorder-up').addEventListener('click', e => {
+        e.stopPropagation();
+        swapMeals(idx, idx - 1);
+      });
+      card.querySelector('.reorder-down').addEventListener('click', e => {
+        e.stopPropagation();
+        swapMeals(idx, idx + 1);
+      });
+
+      // Shopping checkboxes
       card.querySelectorAll('.shopping-list input').forEach(cb => {
         cb.addEventListener('change', () => {
           cb.nextElementSibling.style.textDecoration = cb.checked ? 'line-through' : '';
@@ -1050,6 +1188,24 @@
       });
 
       return card;
+    }
+
+    function swapMeals(idxA, idxB) {
+      if (!currentData) return;
+      const meals = currentData.meals;
+      if (idxB < 0 || idxB >= meals.length) return;
+      // Bytt oppskrifter men behold dagnavnene
+      const dayA = meals[idxA].day;
+      const dayB = meals[idxB].day;
+      [meals[idxA], meals[idxB]] = [meals[idxB], meals[idxA]];
+      meals[idxA].day = dayA;
+      meals[idxB].day = dayB;
+      renderMeals(currentData.meals);
+    }
+
+    function renderMeals(meals) {
+      mealsContainer.innerHTML = '';
+      meals.forEach((meal, i) => mealsContainer.appendChild(buildMealCard(meal, i, meals.length)));
     }
 
     function buildCombinedList(items, totalPrice) {
@@ -1115,8 +1271,8 @@
     }
 
     function renderResults(data) {
-      mealsContainer.innerHTML = '';
-      data.meals.forEach((meal, i) => mealsContainer.appendChild(buildMealCard(meal, i)));
+      currentData = data;
+      renderMeals(data.meals);
       buildStoreComparison(data.storeComparison || null);
       buildCombinedList(data.shoppingList, data.totalPrice);
 
@@ -1130,6 +1286,39 @@
       resultsSection.hidden  = false;
     }
 
+    // ── Print ─────────────────────────────────────────────────────────────
+    document.getElementById('print-btn').addEventListener('click', () => {
+      // Åpne alle kort før utskrift
+      document.querySelectorAll('.meal-card').forEach(c => c.classList.add('open'));
+      document.getElementById('combined-list-section').classList.add('open');
+      window.print();
+    });
+
+    // ── Del med familien ──────────────────────────────────────────────────
+    document.getElementById('share-btn').addEventListener('click', async () => {
+      if (!currentData) return;
+      const shareBtn = document.getElementById('share-btn');
+      try {
+        const payload = JSON.stringify({
+          meals: currentData.meals,
+          shoppingList: currentData.shoppingList,
+          totalPrice: currentData.totalPrice,
+          meta: currentData.meta,
+        });
+        const encoded = btoa(unescape(encodeURIComponent(payload)));
+        const url = `${location.origin}${location.pathname}?plan=${encoded}`;
+        await navigator.clipboard.writeText(url);
+        shareBtn.textContent = '✅ Lenke kopiert!';
+        shareBtn.classList.add('copied');
+        setTimeout(() => {
+          shareBtn.textContent = '📤 Del med familien';
+          shareBtn.classList.remove('copied');
+        }, 3000);
+      } catch {
+        alert('Kunne ikke kopiere lenke. Prøv å kopiere URL-en manuelt fra adressefeltet.');
+      }
+    });
+
     // ── Event listeners ───────────────────────────────────────────────────
     document.getElementById('combined-list-toggle').addEventListener('click', () => {
       document.getElementById('combined-list-section').classList.toggle('open');
@@ -1139,6 +1328,8 @@
       resultsSection.hidden = true;
       formSection.hidden    = false;
       submitBtn.disabled    = false;
+      // Ryd URL
+      history.replaceState(null, '', location.pathname);
     });
 
     form.addEventListener('submit', async e => {
@@ -1178,6 +1369,24 @@
         submitBtn.disabled    = false;
       }
     });
+
+    // ── Last inn delt plan fra URL ─────────────────────────────────────────
+    (function loadSharedPlan() {
+      const encoded = new URLSearchParams(location.search).get('plan');
+      if (!encoded) return;
+      try {
+        const data = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+        if (!data.meals || !data.shoppingList) return;
+        // Vi trenger meta for renderResults
+        if (!data.meta) data.meta = { days: data.meals.length, persons: 4 };
+        formSection.hidden = true;
+        loadingSection.hidden = true;
+        resultsSection.hidden = false;
+        renderResults(data);
+      } catch {
+        // Ugyldig URL-parameter – ignorer og vis skjema
+      }
+    })();
   </script>
 </body>
 </html>

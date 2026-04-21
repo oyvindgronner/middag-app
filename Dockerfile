@@ -2,8 +2,8 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-RUN addgroup -g 1000 appuser && \
-    adduser -D -u 1000 -G appuser appuser
+RUN addgroup -g 10001 appuser && \
+    adduser -D -u 10001 -G appuser appuser
 
 COPY package*.json ./
 RUN npm install --production

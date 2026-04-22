@@ -1,13 +1,18 @@
 import 'dotenv/config';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import { selectMeals } from './planner.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Sorteringsrekkefølge for handleliste (tilsvarer butikkinnredning)
 const CATEGORY_ORDER = ['Frukt/grønt', 'Meieri', 'Kjøtt', 'Fisk', 'Tørrvarer', 'Frys', 'Diverse'];

@@ -102,6 +102,36 @@ app.get('/api/meal-plan', async (req, res) => {
   }
 });
 
+// ---------------------------------------------------------------------------
+// POST /api/feedback
+// ---------------------------------------------------------------------------
+
+app.post('/api/feedback', express.json(), (req, res) => {
+  const { name, email, type, message } = req.body;
+
+  if (!name || !email || !type || !message) {
+    return res.status(400).json({ error: 'Alle felter er obligatoriske.' });
+  }
+
+  try {
+    const timestamp = new Date().toISOString();
+    const feedbackEntry = {
+      timestamp,
+      name,
+      email,
+      type,
+      message,
+    };
+
+    console.log('📧 Feedback mottatt:', feedbackEntry);
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[/api/feedback]', err);
+    res.status(500).json({ error: 'Kunne ikke behandle tilbakemeldingen.' });
+  }
+});
+
 // Health check
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 

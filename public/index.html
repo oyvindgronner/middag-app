@@ -9,9 +9,23 @@
 
     body {
       font-family: system-ui, -apple-system, sans-serif;
-      background: #fafaf8;
+      background: #f5f5f5;
       color: #222;
       min-height: 100vh;
+      line-height: 1.65;
+    }
+
+    /* ── COLOR PALETTE BY MEAL TYPE ────────────────────────────────── */
+    :root {
+      --color-fish: #2196F3;
+      --color-meat: #D32F2F;
+      --color-vegetarian: #4CAF50;
+      --color-vegan: #FFC107;
+      --color-accent: #e8621a;
+      --bg-fish: #E3F2FD;
+      --bg-meat: #FFEBEE;
+      --bg-vegetarian: #E8F5E9;
+      --bg-vegan: #FFFDE7;
     }
 
     .container {
@@ -71,15 +85,16 @@
 
     /* ── FIELDSET / FORM ─────────────────────────────────────────────────── */
     fieldset {
-      border: 1px solid #e8e4e0;
-      border-radius: 12px;
-      padding: 1.1rem 1.2rem;
-      margin-bottom: 0.85rem;
+      border: none;
+      border-radius: 8px;
+      padding: 1.25rem 1.2rem;
+      margin-bottom: 1.5rem;
       background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
     legend {
       font-weight: 700;
-      font-size: 0.82rem;
+      font-size: 0.95rem;
       color: #e8621a;
       text-transform: uppercase;
       letter-spacing: 0.07em;
@@ -96,30 +111,31 @@
     .field-row:first-of-type { margin-top: 0.5rem; }
 
     label.field-label {
-      font-size: 0.9rem;
-      color: #555;
+      font-size: 0.95rem;
+      color: #333;
       min-width: 150px;
       flex-shrink: 0;
+      font-weight: 500;
     }
 
     input[type="number"] {
       width: 70px;
-      padding: 0.4rem 0.5rem;
+      padding: 0.5rem 0.6rem;
       border: 1px solid #ddd;
       border-radius: 7px;
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-family: inherit;
-      background: #fafaf8;
+      background: #fafaf9;
     }
     input[type="text"] {
       flex: 1;
       min-width: 0;
-      padding: 0.4rem 0.6rem;
+      padding: 0.5rem 0.7rem;
       border: 1px solid #ddd;
       border-radius: 7px;
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-family: inherit;
-      background: #fafaf8;
+      background: #fafaf9;
     }
     input[type="number"]:focus,
     input[type="text"]:focus {
@@ -297,6 +313,163 @@
       line-height: 1.5;
     }
 
+    /* ── FEEDBACK BUTTON & MODAL ─────────────────────────────────────────── */
+    .feedback-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #e8621a;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(232,98,26,0.3);
+      transition: transform 0.15s, box-shadow 0.15s;
+      z-index: 99;
+    }
+    .feedback-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(232,98,26,0.4);
+    }
+    .feedback-btn:active { transform: scale(0.95); }
+
+    .feedback-modal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .feedback-modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      cursor: pointer;
+    }
+    .feedback-modal-content {
+      position: relative;
+      background: #fff;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+    }
+    .feedback-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem;
+      border-bottom: 1px solid #f0ece8;
+    }
+    .feedback-modal-header h2 {
+      font-size: 1.2rem;
+      color: #222;
+      margin: 0;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #aaa;
+      cursor: pointer;
+      padding: 0;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s;
+    }
+    .close-btn:hover { color: #e8621a; }
+
+    .feedback-form {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .feedback-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .feedback-field label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #555;
+    }
+    .feedback-field input,
+    .feedback-field textarea,
+    .feedback-field select {
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fafaf8;
+    }
+    .feedback-field input:focus,
+    .feedback-field textarea:focus,
+    .feedback-field select:focus {
+      outline: 2px solid #e8621a;
+      outline-offset: 1px;
+      border-color: transparent;
+      background: #fff;
+    }
+    .feedback-field textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .feedback-actions {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 0.5rem;
+    }
+    .feedback-submit,
+    .feedback-cancel {
+      flex: 1;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .feedback-submit {
+      background: #e8621a;
+      color: #fff;
+    }
+    .feedback-submit:hover { background: #c44d10; }
+    .feedback-submit:active { transform: scale(0.98); }
+    .feedback-cancel {
+      background: #f0ece8;
+      color: #666;
+    }
+    .feedback-cancel:hover { background: #e8e0d8; }
+
+    .feedback-status {
+      padding: 0.8rem;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .feedback-status.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    .feedback-status.error {
+      background: #ffebee;
+      color: #c62828;
+    }
+
     .error-msg {
       background: #fff3f0;
       border: 1px solid #f5a89a;
@@ -442,17 +615,23 @@
 
     /* ── MEAL CARD ───────────────────────────────────────────────────────── */
     .meal-card {
-      border: 1px solid #e8e4e0;
+      border: none;
       border-radius: 12px;
       margin-bottom: 0.75rem;
       overflow: hidden;
       background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
+    .meal-card[data-type="fish"] .card-header { background: var(--bg-fish); }
+    .meal-card[data-type="meat"] .card-header { background: var(--bg-meat); }
+    .meal-card[data-type="vegetarian"] .card-header { background: var(--bg-vegetarian); }
+    .meal-card[data-type="vegan"] .card-header { background: var(--bg-vegan); }
+
     .card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.9rem 1.1rem;
+      padding: 1rem 1.1rem;
       cursor: pointer;
       user-select: none;
       background: #fff;
@@ -471,8 +650,12 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.07em;
-      color: #e8621a;
+      color: #666;
     }
+    .meal-card[data-type="fish"] .card-day { color: var(--color-fish); }
+    .meal-card[data-type="meat"] .card-day { color: var(--color-meat); }
+    .meal-card[data-type="vegetarian"] .card-day { color: var(--color-vegetarian); }
+    .meal-card[data-type="vegan"] .card-day { color: #C49000; }
     .card-name {
       font-size: 1rem;
       font-weight: 600;
@@ -492,6 +675,10 @@
       padding: 0.15rem 0.45rem;
       white-space: nowrap;
     }
+    .meal-card[data-type="fish"] .tag { background: var(--bg-fish); color: var(--color-fish); }
+    .meal-card[data-type="meat"] .tag { background: var(--bg-meat); color: var(--color-meat); }
+    .meal-card[data-type="vegetarian"] .tag { background: var(--bg-vegetarian); color: var(--color-vegetarian); }
+    .meal-card[data-type="vegan"] .tag { background: var(--bg-vegan); color: #C49000; }
     .tag.leftovers { background: #e8f5e9; color: #2e7d32; }
     .card-toggle {
       font-size: 1rem;
@@ -567,6 +754,11 @@
       border-radius: 50%;
       font-size: 0.72rem;
       font-weight: 700;
+    }
+    .meal-card[data-type="fish"] .recipe-steps li::before { background: var(--color-fish); }
+    .meal-card[data-type="meat"] .recipe-steps li::before { background: var(--color-meat); }
+    .meal-card[data-type="vegetarian"] .recipe-steps li::before { background: var(--color-vegetarian); }
+    .meal-card[data-type="vegan"] .recipe-steps li::before { background: #FFC107; }
       display: flex;
       align-items: center;
       justify-content: center;
@@ -923,14 +1115,14 @@
             </div>
           </div>
 
-          <div class="field-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; margin-top:0.9rem;">
-            <label style="font-size:0.9rem; color:#555;" for="likerSpesielt">Liker spesielt</label>
-            <input type="text" id="likerSpesielt" name="likesEspecially" placeholder="f.eks. fisk, pasta, indisk...">
+          <div class="field-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; margin-top:1rem;">
+            <label style="font-size:0.95rem; color:#333; font-weight:500;" for="likerSpesielt">Liker spesielt</label>
+            <input type="text" id="likerSpesielt" name="likesEspecially" placeholder="f.eks. fisk, pasta, indisk..." style="width:100%; font-size:1rem;">
           </div>
 
-          <div class="field-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; margin-top:0.75rem;">
-            <label style="font-size:0.9rem; color:#555;" for="vilIkkeHa">Vil ikke ha</label>
-            <input type="text" id="vilIkkeHa" name="dontWant" placeholder="f.eks. innmat, bønner...">
+          <div class="field-row" style="flex-direction:column; align-items:flex-start; gap:0.3rem; margin-top:1rem;">
+            <label style="font-size:0.95rem; color:#333; font-weight:500;" for="vilIkkeHa">Vil ikke ha</label>
+            <input type="text" id="vilIkkeHa" name="dontWant" placeholder="f.eks. innmat, bønner..." style="width:100%; font-size:1rem;">
           </div>
         </fieldset>
 
@@ -991,6 +1183,48 @@
 
       <button class="new-plan-btn" id="new-plan-btn">← Lag ny ukesmeny</button>
     </section>
+
+    <!-- FEEDBACK MODAL -->
+    <div id="feedback-modal" class="feedback-modal" hidden>
+      <div class="feedback-modal-overlay"></div>
+      <div class="feedback-modal-content">
+        <div class="feedback-modal-header">
+          <h2>💬 Del din tilbakemelding</h2>
+          <button type="button" id="close-feedback-modal" class="close-btn">✕</button>
+        </div>
+        <form id="feedback-form" class="feedback-form">
+          <div class="feedback-field">
+            <label for="feedback-name">Navn</label>
+            <input type="text" id="feedback-name" name="name" required>
+          </div>
+          <div class="feedback-field">
+            <label for="feedback-email">Epostadresse</label>
+            <input type="email" id="feedback-email" name="email" required>
+          </div>
+          <div class="feedback-field">
+            <label for="feedback-type">Type</label>
+            <select id="feedback-type" name="type" required>
+              <option value="">--- Velg type ---</option>
+              <option value="bug">🐛 Bug-rapport</option>
+              <option value="feature">✨ Feature-idé</option>
+              <option value="other">💡 Annet</option>
+            </select>
+          </div>
+          <div class="feedback-field">
+            <label for="feedback-message">Dine tanker</label>
+            <textarea id="feedback-message" name="message" rows="5" placeholder="Hva fungerer eller fungerer ikke?" required></textarea>
+          </div>
+          <div class="feedback-actions">
+            <button type="submit" class="feedback-submit">Send tilbakemelding</button>
+            <button type="button" id="cancel-feedback" class="feedback-cancel">Avbryt</button>
+          </div>
+          <div id="feedback-status" class="feedback-status" hidden></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- FEEDBACK BUTTON -->
+    <button id="feedback-btn" class="feedback-btn" title="Del tilbakemelding eller idé">💬</button>
 
   </div>
 
@@ -1112,6 +1346,7 @@
       const card = document.createElement('article');
       card.className = 'meal-card' + (idx === 0 ? ' open' : '');
       card.dataset.idx = idx;
+      card.dataset.type = meal.type;
 
       const tags = [
         `<span class="tag">${typeIcon(meal.type)} ${typeLabel(meal.type)}</span>`,
@@ -1419,6 +1654,71 @@
         // Ugyldig URL-parameter – ignorer og vis skjema
       }
     })();
+
+    // ── Feedback system ────────────────────────────────────────────────────
+    const feedbackBtn = document.getElementById('feedback-btn');
+    const feedbackModal = document.getElementById('feedback-modal');
+    const feedbackForm = document.getElementById('feedback-form');
+    const closeFeedbackBtn = document.getElementById('close-feedback-modal');
+    const cancelFeedbackBtn = document.getElementById('cancel-feedback');
+    const feedbackOverlay = document.querySelector('.feedback-modal-overlay');
+    const feedbackStatus = document.getElementById('feedback-status');
+
+    function openFeedbackModal() {
+      feedbackModal.hidden = false;
+    }
+
+    function closeFeedbackModal() {
+      feedbackModal.hidden = true;
+      feedbackForm.reset();
+      feedbackStatus.hidden = true;
+    }
+
+    feedbackBtn.addEventListener('click', openFeedbackModal);
+    closeFeedbackBtn.addEventListener('click', closeFeedbackModal);
+    cancelFeedbackBtn.addEventListener('click', closeFeedbackModal);
+    feedbackOverlay.addEventListener('click', closeFeedbackModal);
+
+    feedbackForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      feedbackStatus.hidden = true;
+
+      const name = document.getElementById('feedback-name').value.trim();
+      const email = document.getElementById('feedback-email').value.trim();
+      const type = document.getElementById('feedback-type').value;
+      const message = document.getElementById('feedback-message').value.trim();
+
+      if (!name || !email || !type || !message) {
+        feedbackStatus.textContent = 'Alle felter er obligatoriske.';
+        feedbackStatus.className = 'feedback-status error';
+        feedbackStatus.hidden = false;
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, type, message }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Kunne ikke sende tilbakemelding');
+        }
+
+        feedbackStatus.textContent = '✅ Takk for tilbakemeldingen! Vi leser den med interesse.';
+        feedbackStatus.className = 'feedback-status success';
+        feedbackStatus.hidden = false;
+
+        feedbackForm.reset();
+        setTimeout(closeFeedbackModal, 2000);
+      } catch (err) {
+        feedbackStatus.textContent = `❌ Feil: ${err.message}`;
+        feedbackStatus.className = 'feedback-status error';
+        feedbackStatus.hidden = false;
+      }
+    });
   </script>
 </body>
 </html>

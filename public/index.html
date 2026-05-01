@@ -1266,6 +1266,28 @@
       });
     });
 
+    // ── Allergi-validering: Disable fiskemiddager hvis fisk-allergi ──────
+    const fishPerWeekInput = document.getElementById('fishPerWeek');
+    const fishPerWeekBtns = Array.from(document.querySelectorAll('.counter-btn')).filter(btn => btn.dataset.target === 'fishPerWeek');
+
+    function updateFishControl() {
+      const hasFishAllergy = Array.from(document.querySelectorAll('[name="allergies"]:checked')).some(cb => cb.value === 'fisk');
+      if (hasFishAllergy) {
+        fishPerWeekInput.disabled = true;
+        fishPerWeekInput.value = 0;
+        fishPerWeekBtns.forEach(btn => btn.disabled = true);
+        fishPerWeekInput.style.opacity = '0.5';
+      } else {
+        fishPerWeekInput.disabled = false;
+        fishPerWeekBtns.forEach(btn => btn.disabled = false);
+        fishPerWeekInput.style.opacity = '1';
+      }
+    }
+
+    document.querySelectorAll('[name="allergies"]').forEach(checkbox => {
+      checkbox.addEventListener('change', updateFishControl);
+    });
+
     // ── Build query params ────────────────────────────────────────────────
     function buildParams(f) {
       const p = new URLSearchParams();

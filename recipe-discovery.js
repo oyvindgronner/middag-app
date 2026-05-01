@@ -16,6 +16,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import OpenAI from 'openai';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -230,15 +231,103 @@ function appendRecipesToFiles(recipes) {
  */
 
 async function discoverAndEvaluateRecipes(count = 10, typeFilter = 'all') {
-  // In a real implementation, this would:
-  // - Call a web search API or Claude API to find recipes
-  // - Process through all 5 evaluation steps
-  // - Return validated recipes in the correct format
+  const client = new OpenAI({
+    baseURL: 'http://host-gateway:8085/v1',
+    apiKey: 'local' // Qwen3.5 accepts any key locally
+  });
 
-  console.log(`Placeholder: Would discover ${count} recipes of type ${typeFilter}`);
-  console.log('This should be connected to Claude API with web search for actual recipe discovery.');
+  const exampleRecipe = {
+    id: 'laksepasta',
+    name: 'Laksepasta med spinat',
+    type: 'fish',
+    highProtein: true,
+    allergens: ['fisk', 'gluten', 'laktose'],
+    tags: ['laks', 'pasta', 'fisk', 'spinat'],
+    prepTime: 25,
+    difficulty: 'enkel',
+    leftoverFriendly: true,
+    vegetarianAlternative: 'Pasta med spinat og ricotta',
+    recipe: {
+      servings: 4,
+      steps: [
+        'Kok opp rikelig med lettsaltet vann i en stor kjele. Kok fullkornspasta (400 g) etter anvisning på pakken, men ta den av 1 minutt før anbefalt tid – den skal være al dente.',
+        'Tørk laksefileten (400 g) med kjøkkenpapir og skjær i porsjonsstykker. Krydre godt med salt og pepper.',
+        'Varm en stor stekepanne på middels høy varme og smelt en god klatt smør (ca. 1 ss). Legg i laksen og stek 3 minutter uten å røre.'
+      ]
+    },
+    shoppingList: [
+      { item: 'Laksefilet', search: 'laksefilet', amount: '400 g', estimatedPrice: 89, category: 'Fisk' },
+      { item: 'Pasta (fullkorn)', search: 'fullkornspasta', amount: '400 g', estimatedPrice: 28, category: 'Tørrvarer' }
+    ]
+  };
 
-  return [];
+  const typeList = typeFilter === 'all' ? ['meat', 'fish', 'vegetarian', 'vegan'] : [typeFilter];
+  const recipes = [];
+
+  for (const type of typeList) {
+    const recipesNeeded = Math.ceil(count / typeList.length);
+
+    const systemPrompt = `Du er en ekspert på norsk mat og oppskriftskriving. Du skal generere oppskrifter i JSON-format som passer til en norsk middagsplanlegger-app.
+
+FORMAT-EKSEMPEL:
+${JSON.stringify(exampleRecipe, null, 2)}
+
+KRAV:
+- id: kebab-case, norsk, unik (f.eks. 'laksepasta')
+- name: norsk navn på retten
+- type: '${type}'
+- allergens: array av [${VALID_ALLERGENS.map(a => `'${a}'`).join(', ')}], eller [] hvis ingen
+- tags: array av 3-6 norske ord relatert til retten
+- prepTime: ${MIN_PREP_TIME}-${MAX_PREP_TIME} minutter
+- difficulty: '${VALID_DIFFICULTIES[0]}', '${VALID_DIFFICULTIES[1]}', eller '${VALID_DIFFICULTIES[2]}'
+- highProtein: true if >25g protein per serving, false otherwise
+- leftoverFriendly: true/false based on reheating suitability
+- recipe.steps: array av 5-8 detaljerte norske instruksjoner
+- shoppingList: array av varer med {item, search, amount, estimatedPrice, category}
+- shoppingList.category: en av [${VALID_CATEGORIES.map(c => `'${c}'`).join(', ')}]
+
+CONSTRAINT: Bare ingredienser som finnes i norske dagligvarebutikker (Rema, Kiwi, Meny, Coop).`;
+
+    const userPrompt = `Generer ${recipesNeeded} nye norske ${type}-oppskrifter for en middagsplanlegger.
+Oppskriftene skal være detaljerte, pålitelige og med norske ingredienser.
+Returnér oppskriftene som en JSON-array. Valider også at allergenene stemmer med ingrediensene.
+Format: return ONLY a valid JSON array starting with [ and ending with ].`;
+
+    try {
+      const response = await client.messages.create({
+        model: 'qwen',
+        max_tokens: 4096,
+        system: systemPrompt,
+        messages: [
+          {
+            role: 'user',
+            content: userPrompt
+          }
+        ]
+      });
+
+      const content = response.content[0].text;
+      const jsonMatch = content.match(/\[[\s\S]*\]/);
+
+      if (jsonMatch) {
+        const generatedRecipes = JSON.parse(jsonMatch[0]);
+        recipes.push(...generatedRecipes);
+      }
+    } catch (err) {
+      console.error(`Error generating ${type} recipes:`, err.message);
+    }
+  }
+
+  // Validate all recipes
+  const validated = [];
+  recipes.forEach(recipe => {
+    const { valid, errors } = validateRecipe(recipe);
+    if (valid && !isDuplicate(recipe.id, recipe.name)) {
+      validated.push(recipe);
+    }
+  });
+
+  return validated;
 }
 
 // ============================================================================

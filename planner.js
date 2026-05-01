@@ -13,11 +13,12 @@ function shuffle(arr) {
   return a;
 }
 
-// Sjekker om et måltid matcher brukerens "vil ikke ha"-liste
+// Sjekker om et måltid matcher brukerens "vil ikke ha"-liste (søker i navn, tags og ingredienser)
 function matchesDontWant(meal, dontWant) {
   if (!dontWant) return false;
   const terms = dontWant.toLowerCase().split(/[,\s]+/).filter(Boolean);
-  const haystack = [meal.name, ...meal.tags].join(' ').toLowerCase();
+  const shoppingItems = meal.shoppingList.map(item => item.item).join(' ');
+  const haystack = [meal.name, ...meal.tags, shoppingItems].join(' ').toLowerCase();
   return terms.some(t => haystack.includes(t));
 }
 

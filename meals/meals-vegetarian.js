@@ -40,7 +40,7 @@ export const VEG_MEALS = [
     name: 'Kikertcurry med basmatiris',
     type: 'vegetarian',
     highProtein: true,
-    allergens: [],
+    allergens: ['gluten'],
     tags: ['kikerter', 'curry', 'vegetar', 'indisk', 'belgfrukter', 'ris'],
     prepTime: 30,
     difficulty: 'enkel',

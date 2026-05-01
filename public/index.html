@@ -1347,6 +1347,38 @@
         return;
       }
 
+      const days = parseInt(form.querySelector('[name="days"]').value);
+      const fish = parseInt(form.querySelector('[name="fishPerWeek"]').value);
+      const veg = parseInt(form.querySelector('[name="vegetarianPerWeek"]').value);
+      const vegan = parseInt(form.querySelector('[name="veganPerWeek"]').value);
+
+      if (fish > days) {
+        formError.textContent = `Du kan ikke ha ${fish} fiskemiddager på ${days} dag${days !== 1 ? 'er' : ''}.`;
+        formError.hidden = false;
+        submitBtn.disabled = false;
+        return;
+      }
+      if (veg > days) {
+        formError.textContent = `Du kan ikke ha ${veg} vegetardager på ${days} dag${days !== 1 ? 'er' : ''}.`;
+        formError.hidden = false;
+        submitBtn.disabled = false;
+        return;
+      }
+      if (vegan > days) {
+        formError.textContent = `Du kan ikke ha ${vegan} vegandager på ${days} dag${days !== 1 ? 'er' : ''}.`;
+        formError.hidden = false;
+        submitBtn.disabled = false;
+        return;
+      }
+
+      const totalDietDays = fish + veg + vegan;
+      if (totalDietDays > days) {
+        formError.textContent = `Du kan maksimalt ha ${days} middager per uke. Du har satt ${fish} fisk + ${veg} vegetar + ${vegan} vegan = ${totalDietDays} totalt.`;
+        formError.hidden = false;
+        submitBtn.disabled = false;
+        return;
+      }
+
       const params = buildParams(form);
       formSection.hidden    = true;
       loadingSection.hidden = false;

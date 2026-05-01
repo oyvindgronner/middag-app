@@ -26,7 +26,8 @@ function matchesDontWant(meal, dontWant) {
 function likeScore(meal, likesEspecially) {
   if (!likesEspecially) return 0;
   const terms = likesEspecially.toLowerCase().split(/[,\s]+/).filter(Boolean);
-  const haystack = [meal.name, ...meal.tags].join(' ').toLowerCase();
+  const shoppingItems = meal.shoppingList.map(item => item.item).join(' ');
+  const haystack = [meal.name, ...meal.tags, shoppingItems].join(' ').toLowerCase();
   return terms.filter(t => haystack.includes(t)).length;
 }
 

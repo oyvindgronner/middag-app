@@ -1719,6 +1719,7 @@
       const type = document.getElementById('feedback-type').value;
       const message = document.getElementById('feedback-message').value.trim();
 
+      // ── Input Validation ──────────────────────────────────────────────────
       if (!name || !email || !type || !message) {
         feedbackStatus.textContent = 'Alle felter er obligatoriske.';
         feedbackStatus.className = 'feedback-status error';
@@ -1726,11 +1727,33 @@
         return;
       }
 
+      // Validate input lengths (prevent abuse)
+      if (name.length > 100 || email.length > 255 || message.length > 5000) {
+        feedbackStatus.textContent = '❌ Felt er for langt. Maks: navn 100 tegn, email 255 tegn, melding 5000 tegn.';
+        feedbackStatus.className = 'feedback-status error';
+        feedbackStatus.hidden = false;
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        feedbackStatus.textContent = '❌ Ugyldig e-postadresse.';
+        feedbackStatus.className = 'feedback-status error';
+        feedbackStatus.hidden = false;
+        return;
+      }
+
+      // Basic XSS prevention: remove HTML tags from text inputs
+      const sanitizeInput = (str) => str.replace(/<[^>]*>/g, '').replace(/[<>]/g, '');
+      const sanitizedName = sanitizeInput(name);
+      const sanitizedMessage = sanitizeInput(message);
+
       try {
         const res = await fetch('/api/feedback', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, type, message }),
+          body: JSON.stringify({ name: sanitizedName, email, type, message: sanitizedMessage }),
         });
 
         if (!res.ok) {

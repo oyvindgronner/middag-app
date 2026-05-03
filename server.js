@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { selectMeals } from './planner.js';
 
@@ -10,6 +11,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// ── SECURITY MIDDLEWARE ──────────────────────────────────────────────────────
+app.use(helmet()); // Security headers: CSP, X-Frame-Options, X-Content-Type-Options, etc.
 
 app.use(cors());
 app.use(express.json());
@@ -146,11 +150,25 @@ app.post('/api/feedback', feedbackLimiter, express.json(), (req, res) => {
       message,
     };
 
-    console.log('📧 Feedback mottatt:', feedbackEntry);
+    // ── SECURE LOGGING ────────────────────────────────────────────────────
+    // Only log non-sensitive metadata, NOT user emails/names/messages
+    // This prevents sensitive data exposure in logs
+    const logEntry = {
+      timestamp,
+      type,
+      messageLength: message.length,
+      action: 'feedback_received',
+      ipAddress: req.ip,
+    };
+    console.log('📧 Feedback mottatt:', logEntry);
+    // In production, would send to secure logging service, never console.log emails
+
+    // TODO: Send feedbackEntry to secure storage (e.g., database, encrypted file, or email service)
+    // For now, feedback data is received and validated but not persisted (security-first approach)
 
     res.json({ ok: true });
   } catch (err) {
-    console.error('[/api/feedback]', err);
+    console.error('[/api/feedback] Error processing feedback:', err.message);
     res.status(500).json({ error: 'Kunne ikke behandle tilbakemeldingen.' });
   }
 });

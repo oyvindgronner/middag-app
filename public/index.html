@@ -318,20 +318,26 @@
       position: fixed;
       bottom: 24px;
       right: 24px;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
+      padding: 12px 16px;
+      border-radius: 24px;
       background: #e8621a;
       border: none;
-      font-size: 1.5rem;
+      font-size: 1rem;
       cursor: pointer;
       box-shadow: 0 4px 16px rgba(232,98,26,0.3);
-      transition: transform 0.15s, box-shadow 0.15s;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
       z-index: 99;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      font-weight: 500;
+      white-space: nowrap;
     }
     .feedback-btn:hover {
-      transform: scale(1.1);
+      transform: scale(1.05);
       box-shadow: 0 6px 20px rgba(232,98,26,0.4);
+      background: #d44d0f;
     }
     .feedback-btn:active { transform: scale(0.95); }
 
@@ -1192,6 +1198,9 @@
           <h2>💬 Del din tilbakemelding</h2>
           <button type="button" id="close-feedback-modal" class="close-btn">✕</button>
         </div>
+        <p style="padding: 0 1.2rem 0.75rem; color: #666; font-size: 0.9rem; line-height: 1.5;">
+          Vi jobber med å utvikle denne løsningen, og vi vil gjerne ha dine ideer og tilbakemeldinger for å bli bedre. Hva fungerer bra? Hva kan forbedres?
+        </p>
         <form id="feedback-form" class="feedback-form">
           <div class="feedback-field">
             <label for="feedback-name">Navn</label>
@@ -1224,7 +1233,7 @@
     </div>
 
     <!-- FEEDBACK BUTTON -->
-    <button id="feedback-btn" class="feedback-btn" title="Del tilbakemelding eller idé">💬</button>
+    <button id="feedback-btn" class="feedback-btn" title="Vi jobber med å utvikle løsninger og vil gjerne ha dine ideer!">💬 Tilbakemelding</button>
 
   </div>
 

@@ -156,26 +156,27 @@ export function selectMeals(params) {
   const numMeat  = Math.max(0, days - numFish - numVeg - numVegan);
 
   // ── Detekter kompromisser ──────────────────────────────────────────────────
-  if (!allergies.includes('fisk') && fishPerWeek > numFish) {
+  // Compromise = when requested amount exceeds what's available in pool, not just days limit
+  if (!allergies.includes('fisk') && fishPerWeek > fishPool.length) {
     compromises.push({
       type: 'fish',
-      requested: fishPerWeek,
+      requested: Math.min(fishPerWeek, days),
       provided: numFish,
       reason: `Bare ${fishPool.length} fiskemiddager tilgjengelig`
     });
   }
-  if (vegetarianPerWeek > numVeg) {
+  if (vegetarianPerWeek > vegPool.length) {
     compromises.push({
       type: 'vegetarian',
-      requested: vegetarianPerWeek,
+      requested: Math.min(vegetarianPerWeek, days),
       provided: numVeg,
       reason: `Bare ${vegPool.length} vegetarmiddager tilgjengelig`
     });
   }
-  if (veganPerWeek > numVegan) {
+  if (veganPerWeek > veganPool.length) {
     compromises.push({
       type: 'vegan',
-      requested: veganPerWeek,
+      requested: Math.min(veganPerWeek, days),
       provided: numVegan,
       reason: `Bare ${veganPool.length} veganmiddager tilgjengelig`
     });

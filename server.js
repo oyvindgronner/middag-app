@@ -135,19 +135,27 @@ app.get('/api/meal-plan', mealPlanLimiter, async (req, res) => {
       });
     }
 
+    // Preserve _compromises before mapping (array properties are lost by map())
+    const compromisesData = meals._compromises;
+
     // Sorter handleliste per måltid
     meals = meals.map(meal => ({
       ...meal,
       shoppingList: sortByCategory(meal.shoppingList),
     }));
 
+    // Restore _compromises on new array
+    meals._compromises = compromisesData;
+
     // Bygg samlet handleliste (bruker veiledende priser fra oppskriftene)
     const shoppingList = mergeShoppingList(meals);
     const totalPrice = shoppingList.reduce((s, i) => s + (i.estimatedPrice || 0), 0);
     const storeComparison = null; // Deaktivert - bruker veiledende priser istedenfor
 
-    // Extract compromises if any
+    // Extract compromises if any (property on meals array)
     const compromises = meals._compromises || null;
+    // Remove _compromises from meals array so it doesn't pollute the JSON response
+    delete meals._compromises;
 
     res.json({
       meta: {

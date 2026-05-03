@@ -294,7 +294,7 @@ Returnér oppskriftene som en JSON-array. Valider også at allergenene stemmer m
 Format: return ONLY a valid JSON array starting with [ and ending with ].`;
 
     try {
-      const response = await client.messages.create({
+      const response = await client.chat.completions.create({
         model: 'qwen',
         max_tokens: 4096,
         system: systemPrompt,
@@ -306,7 +306,7 @@ Format: return ONLY a valid JSON array starting with [ and ending with ].`;
         ]
       });
 
-      const content = response.content[0].text;
+      const content = response.choices[0].message.content;
       const jsonMatch = content.match(/\[[\s\S]*\]/);
 
       if (jsonMatch) {

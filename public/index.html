@@ -721,6 +721,38 @@
     .reorder-btn:hover { background: #ffe5d5; color: #e8621a; border-color: #e8621a; }
     .reorder-btn:disabled { opacity: 0.3; cursor: default; }
 
+    /* ── RATING STARS ───────────────────────────────────────────────────── */
+    .rating-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.35rem;
+    }
+    .stars {
+      display: flex;
+      gap: 0.15rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .star {
+      color: #ccc;
+      transition: color 0.1s;
+      user-select: none;
+    }
+    .star:hover, .star.hover { color: #ffc107; }
+    .star.filled { color: #ffc107; }
+    .stars:not(:hover) .star.preview { color: #ccc; }
+    .rating-text {
+      font-size: 0.73rem;
+      color: #999;
+      min-width: 70px;
+    }
+    .stars.disabled .star {
+      cursor: default;
+      opacity: 0.7;
+    }
+    .stars.disabled .star:hover { color: #ccc; }
+
     .card-body {
       max-height: 0;
       overflow: hidden;
@@ -1253,6 +1285,49 @@
 
     // Holder state for hele resultatet (brukes til deling og resortering)
     let currentData = null;
+    const ratedMeals = new Set();
+
+    // ── Rating helpers ────────────────────────────────────────────────────
+    async function loadMealRating(mealId, starsEl, ratingText) {
+      try {
+        const response = await fetch(`/api/meals/${mealId}/rating`);
+        if (!response.ok) return;
+        const data = await response.json();
+        updateRatingDisplay(starsEl, ratingText, data.averageRating, data.ratingCount, false);
+      } catch (err) {
+        console.error('Error loading rating:', err);
+      }
+    }
+
+    async function submitMealRating(mealId, rating, starsEl, ratingText) {
+      if (ratedMeals.has(mealId)) return;
+      try {
+        const response = await fetch(`/api/meals/${mealId}/rating`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rating })
+        });
+        if (!response.ok) return;
+        const data = await response.json();
+        ratedMeals.add(mealId);
+        starsEl.classList.add('disabled');
+        updateRatingDisplay(starsEl, ratingText, data.averageRating, data.ratingCount, true);
+      } catch (err) {
+        console.error('Error submitting rating:', err);
+      }
+    }
+
+    function updateRatingDisplay(starsEl, ratingText, average, count, userRated) {
+      const parentStars = starsEl.querySelectorAll('.star');
+      const filledCount = Math.round(average);
+
+      parentStars.forEach((star, i) => {
+        star.classList.toggle('filled', i < filledCount);
+      });
+
+      const text = count === 1 ? '(1 vurdering)' : `(${count} vurderinger)`;
+      ratingText.textContent = text;
+    }
 
     // ── Toggle slider (restemat) ──────────────────────────────────────────
     document.querySelectorAll('label input[type="checkbox"][name="leftovers"]').forEach(cb => {
@@ -1413,6 +1488,16 @@
             <span class="card-day">${meal.day}</span>
             <span class="card-name">${meal.name}</span>
             <div class="card-meta">${tags}</div>
+            <div class="rating-container">
+              <div class="stars" data-meal-id="${meal.id}">
+                <span class="star" data-value="1">☆</span>
+                <span class="star" data-value="2">☆</span>
+                <span class="star" data-value="3">☆</span>
+                <span class="star" data-value="4">☆</span>
+                <span class="star" data-value="5">☆</span>
+              </div>
+              <span class="rating-text">(0 vurderinger)</span>
+            </div>
           </div>
           <span class="card-toggle" aria-hidden="true">▼</span>
         </div>
@@ -1452,6 +1537,39 @@
           cb.nextElementSibling.style.color          = cb.checked ? '#bbb' : '';
         });
       });
+
+      // Rating stars
+      const starsEl = card.querySelector('.stars');
+      if (starsEl) {
+        const stars = starsEl.querySelectorAll('.star');
+        const ratingText = card.querySelector('.rating-text');
+
+        // Load rating on card creation
+        loadMealRating(meal.id, stars, ratingText);
+
+        // Hover preview
+        stars.forEach((star, idx) => {
+          star.addEventListener('mouseenter', () => {
+            stars.forEach((s, i) => {
+              s.classList.toggle('hover', i <= idx);
+            });
+          });
+        });
+
+        starsEl.addEventListener('mouseleave', () => {
+          stars.forEach(s => s.classList.remove('hover'));
+        });
+
+        // Click to rate
+        stars.forEach(star => {
+          star.addEventListener('click', e => {
+            e.stopPropagation();
+            if (starsEl.classList.contains('disabled')) return;
+            const rating = parseInt(star.dataset.value);
+            submitMealRating(meal.id, rating, stars, ratingText);
+          });
+        });
+      }
 
       return card;
     }

@@ -5,12 +5,22 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import pg from 'pg';
 import { selectMeals } from './planner.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// ── DATABASE CLIENT ──────────────────────────────────────────────────────
+const pool = new pg.Pool({
+  host: process.env.POSTGRES_HOST || 'localhost',
+  port: process.env.POSTGRES_PORT || 5432,
+  user: process.env.POSTGRES_USER || 'postgres',
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_DB || 'postgres',
+});
 
 // ── SECURITY MIDDLEWARE ──────────────────────────────────────────────────────
 app.use(helmet()); // Security headers: CSP, X-Frame-Options, X-Content-Type-Options, etc.
@@ -170,6 +180,94 @@ app.post('/api/feedback', feedbackLimiter, express.json(), (req, res) => {
   } catch (err) {
     console.error('[/api/feedback] Error processing feedback:', err.message);
     res.status(500).json({ error: 'Kunne ikke behandle tilbakemeldingen.' });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/meals/:mealId/rating
+// ---------------------------------------------------------------------------
+
+app.get('/api/meals/:mealId/rating', async (req, res) => {
+  const { mealId } = req.params;
+
+  try {
+    const result = await pool.query(`
+      SELECT
+        COUNT(*) as count,
+        AVG(rating) as average
+      FROM meal_ratings
+      WHERE meal_id = $1
+    `, [mealId]);
+
+    const row = result.rows[0];
+    const ratingCount = parseInt(row.count) || 0;
+    const averageRating = ratingCount > 0 ? parseFloat(row.average).toFixed(1) : 0;
+
+    res.json({
+      averageRating: parseFloat(averageRating),
+      ratingCount,
+    });
+  } catch (err) {
+    console.error('[/api/meals/:id/rating] Error fetching ratings:', err);
+    res.status(500).json({ error: 'Kunne ikke hente ratings.' });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/meals/:mealId/rating
+// ---------------------------------------------------------------------------
+
+const ratingLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 5,
+  message: 'For mange rating-submissions. Vent minst 60 sekunder før nytt forsøk.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.post('/api/meals/:mealId/rating', ratingLimiter, express.json(), async (req, res) => {
+  const { mealId } = req.params;
+  const { rating } = req.body;
+  const ip = req.ip || 'unknown';
+
+  // Validation
+  if (!rating || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+    return res.status(400).json({ error: 'Rating må være et tall mellom 1 og 5.' });
+  }
+
+  try {
+    // Insert or update rating (UPSERT via ON CONFLICT)
+    const result = await pool.query(`
+      INSERT INTO meal_ratings (meal_id, rating, ip_address)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (meal_id, ip_address) DO UPDATE
+        SET rating = $2, created_at = CURRENT_TIMESTAMP
+      RETURNING rating
+    `, [mealId, rating, ip]);
+
+    // Fetch updated average
+    const avgResult = await pool.query(`
+      SELECT
+        COUNT(*) as count,
+        AVG(rating) as average
+      FROM meal_ratings
+      WHERE meal_id = $1
+    `, [mealId]);
+
+    const row = avgResult.rows[0];
+    const ratingCount = parseInt(row.count) || 0;
+    const averageRating = ratingCount > 0 ? parseFloat(row.average).toFixed(1) : 0;
+
+    console.log(`⭐ Rating mottatt: ${mealId} = ${rating} stjerner (fra ${ip})`);
+
+    res.json({
+      ok: true,
+      averageRating: parseFloat(averageRating),
+      ratingCount,
+    });
+  } catch (err) {
+    console.error('[POST /api/meals/:id/rating] Error saving rating:', err);
+    res.status(500).json({ error: 'Kunne ikke lagre ratingen.' });
   }
 });
 

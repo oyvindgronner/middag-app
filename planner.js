@@ -1,6 +1,7 @@
 // planner.js — velger og arrangerer måltider basert på brukerpreferanser
 
 import { MEALS } from './meals.js';
+import { scaleRecipe } from './scale-recipe.js';
 
 const DAYS = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag'];
 
@@ -166,12 +167,12 @@ export function selectMeals(params) {
   // ── Arranger og tilordne dager ────────────────────────────────────────────
   const arranged = arrangeMeals(selectedFish, selectedVeg, selectedVegan, selectedMeat, days);
 
-  return arranged.map((meal, i) => ({
-    ...meal,
-    day: DAYS[i],
-    recipe: {
-      ...meal.recipe,
-      servings: persons,
-    },
-  }));
+  return arranged.map((meal, i) => {
+    const mealWithDay = {
+      ...meal,
+      day: DAYS[i],
+    };
+    // Skaler oppskriften basert på antall personer
+    return scaleRecipe(mealWithDay, meal.recipe.servings, persons);
+  });
 }

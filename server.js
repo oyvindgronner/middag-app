@@ -22,6 +22,29 @@ const pool = new pg.Pool({
   database: process.env.POSTGRES_DB || 'postgres',
 });
 
+// Initialize database tables on startup
+async function initializeDatabase() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS meal_ratings (
+        id SERIAL PRIMARY KEY,
+        meal_id VARCHAR(255) NOT NULL,
+        rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+        ip_address VARCHAR(45),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(meal_id, ip_address)
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_meal_id ON meal_ratings(meal_id);
+    `);
+    console.log('✅ Database tables initialized');
+  } catch (err) {
+    console.warn('⚠️ Database initialization skipped (likely no PostgreSQL):', err.message);
+  }
+}
+
+initializeDatabase();
+
 // ── SECURITY MIDDLEWARE ──────────────────────────────────────────────────────
 app.use(helmet()); // Security headers: CSP, X-Frame-Options, X-Content-Type-Options, etc.
 

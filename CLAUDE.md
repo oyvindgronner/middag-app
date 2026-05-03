@@ -2,21 +2,24 @@
 
 ## Hva er dette?
 Backend for **stormat.flott.org** – en norsk middagsplanlegger for forbrukere.
-Node.js / ESM-moduler. Ingen bundler. Kjøres med `node server.js`.
+Node.js / ESM-moduler. Live på kynux (Docker), https://stormat.flott.org
 
-## Nåværende status
-Grunnstrukturen er ferdig. Det som mangler er **flere oppskrifter**.
-Målet er totalt 100 middagsoppskrifter. Status per nå:
+## 🎯 Status — Phase 4 FERDIG (2026-05-03)
 
-| Kategori | Type-verdi | Har | Mål | **Mangler** |
-|---|---|---|---|---|
-| Kjøtt (storfe, svin, kylling, lam, vilt) | `'meat'` | 12 | 40 | **28** |
-| Fisk og sjømat | `'fish'` | 10 | 20 | **10** |
-| Vegetar (ingen kjøtt, ikke vegansk) | `'vegetarian'` | 7 | 28 | **21** |
-| Vegan (ingen animalske produkter) | `'vegan'` | 0 | 12 | **12** |
-| **Total** | | **29** | **100** | **71** |
+✅ **100/100 oppskrifter** — alle 4 kategorier fullstendig  
+✅ **Recipe Scaling** — ingrediensmengder skaleres basert på personer (1 barn → ¼ ingredienser)  
+✅ **User Rating System** — 5-stjernersystem for oppskrifter  
+✅ **Allergen-sikkerhet** — alle 100 oppskrifter auditert  
+✅ **Security Hardening** — Helmet.js, rate limiting, XSS-proteksjon  
+✅ **Database Auto-Init** — meal_ratings tabell opprettet ved startup  
 
-Oppdater disse tallene i CLAUDE.md etter hvert som oppskrifter legges til.
+| Feature | Status | Merk |
+|---------|--------|------|
+| Oppskrifter | ✅ 100/100 | Alle kategorier ferdig |
+| Recipe Scaling | ✅ Live | Portions tilpasses antall personer |
+| Rating System | ✅ API + UI | Graceful fallback når DB unavailable |
+| Allergen-filter | ✅ Sikker | Alle 100 auditert 2026-05-03 |
+| Security | ✅ Phase 1 | Helmet, rate-limit, XSS-beskyttelse |
 
 ## Oppskriftsstruktur
 Alle oppskrifter følger dette formatet (se eksempler i `meals.js`):

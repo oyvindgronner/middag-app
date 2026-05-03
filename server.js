@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import { selectMeals } from './planner.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -13,6 +14,28 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// ── RATE LIMITING ───────────────────────────────────────────────────────────
+// Beskytter API mot DoS-angrep og abuse
+const mealPlanLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,  // 1 minutt
+  max: 10,                  // Maks 10 requests per minutt per IP
+  message: 'For mange requests til /api/meal-plan. Vent minst 60 sekunder før nytt forsøk.',
+  standardHeaders: true,    // Returner rate limit info i `RateLimit-*` headers
+  legacyHeaders: false,     // Disable the `X-RateLimit-*` headers
+  skip: (req) => {
+    // Skip rate limiting for local development (localhost)
+    return req.ip === '127.0.0.1' || req.ip === '::1';
+  }
+});
+
+const feedbackLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,  // 1 minutt
+  max: 5,                   // Maks 5 feedback per minutt per IP
+  message: 'For mange feedback-submissions. Vent minst 60 sekunder før nytt forsøk.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Sorteringsrekkefølge for handleliste (tilsvarer butikkinnredning)
 const CATEGORY_ORDER = ['Frukt/grønt', 'Meieri', 'Kjøtt', 'Fisk', 'Tørrvarer', 'Frys', 'Diverse'];
@@ -44,7 +67,7 @@ function mergeShoppingList(meals) {
 // GET /api/meal-plan
 // ---------------------------------------------------------------------------
 
-app.get('/api/meal-plan', async (req, res) => {
+app.get('/api/meal-plan', mealPlanLimiter, async (req, res) => {
   const q = req.query;
 
   const days = Math.min(Math.max(parseInt(q.days) || 5, 1), 30);
@@ -106,7 +129,7 @@ app.get('/api/meal-plan', async (req, res) => {
 // POST /api/feedback
 // ---------------------------------------------------------------------------
 
-app.post('/api/feedback', express.json(), (req, res) => {
+app.post('/api/feedback', feedbackLimiter, express.json(), (req, res) => {
   const { name, email, type, message } = req.body;
 
   if (!name || !email || !type || !message) {

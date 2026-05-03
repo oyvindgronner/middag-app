@@ -9,6 +9,7 @@ Node.js / ESM-moduler. Live på kynux (Docker), https://stormat.flott.org
 ✅ **100/100 oppskrifter** — alle 4 kategorier fullstendig  
 ✅ **Recipe Scaling** — ingrediensmengder skaleres basert på personer (1 barn → ¼ ingredienser)  
 ✅ **User Rating System** — 5-stjernersystem for oppskrifter  
+✅ **Compromise Messaging** — transparens når filter ikke kan oppfylles 100%  
 ✅ **Allergen-sikkerhet** — alle 100 oppskrifter auditert  
 ✅ **Security Hardening** — Helmet.js, rate limiting, XSS-proteksjon  
 ✅ **Database Auto-Init** — meal_ratings tabell opprettet ved startup  
@@ -18,6 +19,7 @@ Node.js / ESM-moduler. Live på kynux (Docker), https://stormat.flott.org
 | Oppskrifter | ✅ 100/100 | Alle kategorier ferdig |
 | Recipe Scaling | ✅ Live | Portions tilpasses antall personer |
 | Rating System | ✅ API + UI | Graceful fallback når DB unavailable |
+| Compromise Messages | ✅ Live | Gul banner viser når ønsker > tilgjengelig |
 | Allergen-filter | ✅ Sikker | Alle 100 auditert 2026-05-03 |
 | Security | ✅ Phase 1 | Helmet, rate-limit, XSS-beskyttelse |
 

@@ -108,10 +108,12 @@ app.get('/api/meal-plan', mealPlanLimiter, async (req, res) => {
   const q = req.query;
 
   const days = Math.min(Math.max(parseInt(q.days) || 5, 1), 30);
+  const adults = parseInt(q.adults);
+  const children = parseInt(q.children);
   const params = {
     days,
-    persons:           Math.min(Math.max((parseInt(q.adults) || 2) + (parseInt(q.children) || 0), 1), 20),
-    hasChildren:       (parseInt(q.children) || 0) > 0,
+    persons:           Math.min(Math.max((isNaN(adults) ? 2 : adults) + (isNaN(children) ? 0 : children), 1), 20),
+    hasChildren:       (isNaN(children) ? 0 : children) > 0,
     allergies:         [].concat(q.allergies || []),
     cookTime:          parseInt(q.cookTime) || 30,
     difficulty:        q.difficulty || 'enkel',

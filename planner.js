@@ -124,6 +124,7 @@ export function selectMeals(params) {
   } = params;
 
   const maxTime = cookTime >= 60 ? Infinity : parseInt(cookTime);
+  const compromises = [];
 
   // ── Filtrer ut ugyldige måltider ─────────────────────────────────────────
   let pool = MEALS.filter(meal => {
@@ -154,6 +155,32 @@ export function selectMeals(params) {
   const numVegan = Math.min(veganPerWeek, days - numFish - numVeg, veganPool.length);
   const numMeat  = Math.max(0, days - numFish - numVeg - numVegan);
 
+  // ── Detekter kompromisser ──────────────────────────────────────────────────
+  if (!allergies.includes('fisk') && fishPerWeek > numFish) {
+    compromises.push({
+      type: 'fish',
+      requested: fishPerWeek,
+      provided: numFish,
+      reason: `Bare ${fishPool.length} fiskemiddager tilgjengelig`
+    });
+  }
+  if (vegetarianPerWeek > numVeg) {
+    compromises.push({
+      type: 'vegetarian',
+      requested: vegetarianPerWeek,
+      provided: numVeg,
+      reason: `Bare ${vegPool.length} vegetarmiddager tilgjengelig`
+    });
+  }
+  if (veganPerWeek > numVegan) {
+    compromises.push({
+      type: 'vegan',
+      requested: veganPerWeek,
+      provided: numVegan,
+      reason: `Bare ${veganPool.length} veganmiddager tilgjengelig`
+    });
+  }
+
   // ── Velg måltider ─────────────────────────────────────────────────────────
   const usedIds = new Set();
 
@@ -167,7 +194,7 @@ export function selectMeals(params) {
   // ── Arranger og tilordne dager ────────────────────────────────────────────
   const arranged = arrangeMeals(selectedFish, selectedVeg, selectedVegan, selectedMeat, days);
 
-  return arranged.map((meal, i) => {
+  const meals = arranged.map((meal, i) => {
     const mealWithDay = {
       ...meal,
       day: DAYS[i],
@@ -175,4 +202,9 @@ export function selectMeals(params) {
     // Skaler oppskriften basert på antall personer
     return scaleRecipe(mealWithDay, meal.recipe.servings, persons);
   });
+
+  // Legg til kompromiss-informasjon på resultatobjektet
+  meals._compromises = compromises.length > 0 ? compromises : null;
+
+  return meals;
 }

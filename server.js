@@ -146,12 +146,16 @@ app.get('/api/meal-plan', mealPlanLimiter, async (req, res) => {
     const totalPrice = shoppingList.reduce((s, i) => s + (i.estimatedPrice || 0), 0);
     const storeComparison = null; // Deaktivert - bruker veiledende priser istedenfor
 
+    // Extract compromises if any
+    const compromises = meals._compromises || null;
+
     res.json({
       meta: {
         days:        params.days,
         persons:     params.persons,
         generatedAt: new Date().toISOString(),
         isDummy:     false,
+        compromises,
       },
       meals,
       shoppingList,

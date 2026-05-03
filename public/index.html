@@ -486,6 +486,38 @@
       font-size: 0.9rem;
     }
 
+    /* ── COMPROMISES BANNER ──────────────────────────────────────────────── */
+    .compromises-banner {
+      background: #fffbeb;
+      border: 1px solid #f59e0b;
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.9rem;
+      color: #78350f;
+      line-height: 1.6;
+    }
+    .compromises-banner strong { color: #d97706; }
+    .compromises-banner h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.95rem;
+      color: #92400e;
+    }
+    .compromises-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 0 0;
+    }
+    .compromises-list li {
+      padding: 0.35rem 0 0.35rem 1.8rem;
+      position: relative;
+    }
+    .compromises-list li::before {
+      content: '⚠️';
+      position: absolute;
+      left: 0;
+    }
+
     /* ── LOADING ─────────────────────────────────────────────────────────── */
     .loading-section {
       display: flex;
@@ -1200,6 +1232,8 @@
         <span class="total-price" id="results-total"></span>
       </div>
 
+      <div id="compromises-section"></div>
+
       <div class="result-actions">
         <button class="action-btn" id="print-btn">🖨️ Skriv ut / PDF</button>
         <button class="action-btn" id="share-btn">📤 Del med familien</button>
@@ -1272,16 +1306,17 @@
   <script>
     const API = '/api/meal-plan';
 
-    const formSection    = document.getElementById('form-section');
-    const loadingSection = document.getElementById('loading-section');
-    const resultsSection = document.getElementById('results-section');
-    const form           = document.getElementById('meal-form');
-    const submitBtn      = document.getElementById('submit-btn');
-    const formError      = document.getElementById('form-error');
-    const mealsContainer = document.getElementById('meals-container');
-    const combinedInner  = document.getElementById('combined-list-inner');
-    const resultsTotal   = document.getElementById('results-total');
-    const newPlanBtn     = document.getElementById('new-plan-btn');
+    const formSection        = document.getElementById('form-section');
+    const loadingSection     = document.getElementById('loading-section');
+    const resultsSection     = document.getElementById('results-section');
+    const form               = document.getElementById('meal-form');
+    const submitBtn          = document.getElementById('submit-btn');
+    const formError          = document.getElementById('form-error');
+    const mealsContainer     = document.getElementById('meals-container');
+    const combinedInner      = document.getElementById('combined-list-inner');
+    const resultsTotal       = document.getElementById('results-total');
+    const newPlanBtn         = document.getElementById('new-plan-btn');
+    const compromisesSection = document.getElementById('compromises-section');
 
     // Holder state for hele resultatet (brukes til deling og resortering)
     let currentData = null;
@@ -1654,9 +1689,32 @@
       </div>`;
     }
 
+    function buildCompromisesBanner(compromises) {
+      if (!compromises || compromises.length === 0) {
+        compromisesSection.innerHTML = '';
+        return;
+      }
+
+      const items = compromises.map(c => {
+        const typeLabel = {
+          fish: 'Fiskemiddager',
+          vegetarian: 'Vegetarmiddager',
+          vegan: 'Veganmiddager'
+        }[c.type] || c.type;
+        return `<li><strong>${typeLabel}:</strong> Ønsket ${c.requested}, men bare ${c.provided} tilgjengelig. ${c.reason}</li>`;
+      }).join('');
+
+      compromisesSection.innerHTML = `<div class="compromises-banner">
+        <h3>⚠️ Kompromisser gjort</h3>
+        <p>Vi kunne ikke oppfylle alle dine preferanser 100%. Her er hva som ble justert:</p>
+        <ul class="compromises-list">${items}</ul>
+      </div>`;
+    }
+
     function renderResults(data) {
       currentData = data;
       renderMeals(data.meals);
+      buildCompromisesBanner(data.meta.compromises);
       buildStoreComparison(data.storeComparison || null);
       buildCombinedList(data.shoppingList, data.totalPrice);
 

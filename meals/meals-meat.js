@@ -713,7 +713,7 @@ export const MEAT_MEALS = [
     name: 'Entrecôte med chimichurri og ovnsbakte poteter',
     type: 'meat',
     highProtein: true,
-    allergens: [],
+    allergens: ['soya'],
     tags: ['entrecôte', 'biff', 'chimichurri', 'argentinsk', 'grilling'],
     prepTime: 35,
     difficulty: 'middels',

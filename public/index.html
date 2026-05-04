@@ -726,6 +726,14 @@
       margin-left: 0.75rem;
     }
     .meal-card.open .card-toggle { transform: rotate(180deg); }
+    .meal-card.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+    }
+    .meal-card.drag-over {
+      border: 2px solid #e8621a;
+      box-shadow: 0 0 8px rgba(232, 98, 26, 0.3);
+    }
 
     /* ── REORDER BUTTONS ─────────────────────────────────────────────────── */
     .reorder-btns {
@@ -1488,6 +1496,7 @@
       card.className = 'meal-card' + (idx === 0 ? ' open' : '');
       card.dataset.idx = idx;
       card.dataset.type = meal.type;
+      card.draggable = true;
 
       const tags = [
         `<span class="tag">${typeIcon(meal.type)} ${typeLabel(meal.type)}</span>`,
@@ -1565,6 +1574,38 @@
         swapMeals(idx, idx + 1);
       });
 
+      // Drag and drop
+      card.addEventListener('dragstart', e => {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', idx.toString());
+        card.classList.add('dragging');
+      });
+
+      card.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (e.target.closest('article') === card && card.classList.contains('dragging') === false) {
+          card.classList.add('drag-over');
+        }
+      });
+
+      card.addEventListener('dragleave', () => {
+        card.classList.remove('drag-over');
+      });
+
+      card.addEventListener('drop', e => {
+        e.preventDefault();
+        const draggedIdx = parseInt(e.dataTransfer.getData('text/plain'));
+        if (draggedIdx !== idx) {
+          swapMeals(draggedIdx, idx);
+        }
+        card.classList.remove('drag-over');
+      });
+
+      card.addEventListener('dragend', () => {
+        card.classList.remove('dragging', 'drag-over');
+      });
+
       // Shopping checkboxes
       card.querySelectorAll('.shopping-list input').forEach(cb => {
         cb.addEventListener('change', () => {
@@ -1580,7 +1621,7 @@
         const ratingText = card.querySelector('.rating-text');
 
         // Load rating on card creation
-        loadMealRating(meal.id, stars, ratingText);
+        loadMealRating(meal.id, starsEl, ratingText);
 
         // Hover preview
         stars.forEach((star, idx) => {

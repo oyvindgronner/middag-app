@@ -770,4 +770,66 @@ export const FISH_MEALS = [
     ],
   },
 
+  {
+    id: 'sei-sous-vide-restaurant',
+    name: 'Sei sous-vide med beurre blanc og grønnsaker',
+    type: 'fish',
+    highProtein: true,
+    allergens: ['fisk', 'laktose'],
+    tags: ['sei', 'sous-vide', 'restaurant', 'løkløk', 'avansert'],
+    prepTime: 70,
+    difficulty: 'avansert',
+    leftoverFriendly: false,
+    recipe: {
+      servings: 4,
+      steps: [
+        'Vakuumpakk seifileter (4 × 120 g) med smør, timian, sitronsaft, salt og pepper. Seitid: 45 minutter på 56°C (eller immersion blender med varmeregulert vannbad).',
+        'Lag beurre blanc: reduser hvitt vin (1 dl) og hvitvinseddik (2 ss) med finhakket sjalottløk (2) ned til ca. 2 ss. Fjern fra varme.',
+        'Rør inn kaldt smør (150 g i terninger) litt etter litt. Passér gjennom sil. Smak til med salt og hvit pepper.',
+        'Dampetilbered: carrots (8 baby), fennikel (1 ball skåret), og små poteter (200 g) i 8–10 minutter til akkurat møre.',
+        'Tørk seifileterne, rist kort i panne med smør til gullbrun. Server med beurre blanc, dampet grønnsaker og frisk dill.',
+      ],
+    },
+    shoppingList: [
+      { item: 'Seifileter', search: 'seifileter', amount: '480 g', estimatedPrice: 95, category: 'Fisk' },
+      { item: 'Hvitt vin', search: 'hvitt vin', amount: '2 dl', estimatedPrice: 40, category: 'Annet' },
+      { item: 'Hvitvinseddik', search: 'hvitvinseddik', amount: '2 ss', estimatedPrice: 8, category: 'Tørrvarer' },
+      { item: 'Smør (høy kvalitet)', search: 'smør', amount: '150 g', estimatedPrice: 35, category: 'Meieri' },
+      { item: 'Sjalottløk', search: 'sjalottløk', amount: '2 stk', estimatedPrice: 8, category: 'Frukt/grønt' },
+      { item: 'Gulrot baby', search: 'gulrot baby', amount: '8 stk', estimatedPrice: 12, category: 'Frukt/grønt' },
+      { item: 'Fennikel', search: 'fennikel', amount: '1 ball', estimatedPrice: 15, category: 'Frukt/grønt' },
+    ],
+  },
+
+  {
+    id: 'torsk-asiatisk-papir',
+    name: 'Torsk dampet i papir med asiatiske smak',
+    type: 'fish',
+    highProtein: true,
+    allergens: ['fisk', 'gluten', 'soya'],
+    tags: ['torsk', 'asiatisk', 'papirdampet', 'lemongrass', 'avansert'],
+    prepTime: 45,
+    difficulty: 'avansert',
+    leftoverFriendly: false,
+    recipe: {
+      servings: 4,
+      steps: [
+        'Lag marinade: bland 4 ss soyasaus, 2 ss riseddik, 1 ss sesamolje, 2 cm revet ingefær, 2 finhakkede hvitløkfedd og 1 finhakket rød chili. Delt i to deler.',
+        'Klipp 4 ark bakepapir (30×40 cm) og legg den fine siden opp. Legg ½ lemongrass, ½ pakchoi og 1 torskefilet (150 g) på hver.',
+        'Drysle halvparten av marinaden over fisken. Lukk papirpakker: fold ender inn og krim lufttett.',
+        'Dampetilbered i ovn på 200°C i 12–15 minutter, eller over kokende vann i 15 minutter.',
+        'Server i åpne papirpakker (vær forsiktig med dampen!) og dryss gjenværende marinade og frisk koriander over.',
+      ],
+    },
+    shoppingList: [
+      { item: 'Torskefilet', search: 'torskefilet', amount: '600 g', estimatedPrice: 120, category: 'Fisk' },
+      { item: 'Lemongrass', search: 'lemongrass', amount: '2 stk', estimatedPrice: 10, category: 'Frukt/grønt' },
+      { item: 'Pakchoi/bok choi', search: 'pakchoi', amount: '2 stk', estimatedPrice: 12, category: 'Frukt/grønt' },
+      { item: 'Soyasaus', search: 'soyasaus', amount: '4 ss', estimatedPrice: 15, category: 'Tørrvarer' },
+      { item: 'Riseddik', search: 'riseddik', amount: '2 ss', estimatedPrice: 12, category: 'Tørrvarer' },
+      { item: 'Sesamolje', search: 'sesamolje', amount: '1 ss', estimatedPrice: 15, category: 'Tørrvarer' },
+      { item: 'Bakepapir', search: 'bakepapir', amount: '1 pakke', estimatedPrice: 8, category: 'Annet' },
+    ],
+  },
+
 ];

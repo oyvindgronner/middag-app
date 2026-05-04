@@ -673,4 +673,68 @@ export const VEG_MEALS = [
     ],
   },
 
+  {
+    id: 'risotto-pistasjie-saffran',
+    name: 'Risotto med saffran, pistasjier og parmesan',
+    type: 'vegetarian',
+    highProtein: false,
+    allergens: ['gluten', 'laktose'],
+    tags: ['risotto', 'saffran', 'pistasjier', 'italiensk', 'avansert'],
+    prepTime: 35,
+    difficulty: 'avansert',
+    leftoverFriendly: false,
+    recipe: {
+      servings: 4,
+      steps: [
+        'Varm grønnsakskraft (1 liter) i en kjele. Løs saffran (0¼ ts) i varm kraft.',
+        'Fres finhakket løk (1) og sjalottløk (2) i smør og olivenolje til mykt. Tilsett risotoris (300 g) og rør kontinuerlig i 2 minutter.',
+        'Tilsett hvitt vin (1 dl), rør til det er absorbert. Begynn å tilsette saffran-kraft skritt for skritt (ca. 1 dl av gangen), rør kontinuerlig og vent til væsken absorbers før neste tilsetting.',
+        'Etter 18–20 minutter skal risen være al dente (mørt men med litt motstand). Rør inn kaldt smør (50 g), revet parmesan (75 g) og finhakket persille.',
+        'Pyntes med hakket pistasjier, ekstra parmesan og basilikum. Serve umiddelbart.',
+      ],
+    },
+    shoppingList: [
+      { item: 'Risotoris (Arborio/Carnaroli)', search: 'arborio reis', amount: '300 g', estimatedPrice: 20, category: 'Tørrvarer' },
+      { item: 'Saffran', search: 'saffran tråder', amount: '0¼ ts', estimatedPrice: 25, category: 'Krydder' },
+      { item: 'Hvitt vin', search: 'hvitt vin', amount: '2 dl', estimatedPrice: 40, category: 'Annet' },
+      { item: 'Smør', search: 'smør', amount: '50 g', estimatedPrice: 12, category: 'Meieri' },
+      { item: 'Parmesan', search: 'parmesan', amount: '75 g', estimatedPrice: 30, category: 'Meieri' },
+      { item: 'Pistasjier skallet', search: 'pistasjier', amount: '75 g', estimatedPrice: 45, category: 'Tørrvarer' },
+      { item: 'Grønnsakskraft', search: 'grønnsakskraft', amount: '1 liter', estimatedPrice: 15, category: 'Tørrvarer' },
+    ],
+  },
+
+  {
+    id: 'seitan-stroganoff-vegan',
+    name: 'Veganstroganoff med hjemmelaget seitan og sopp',
+    type: 'vegan',
+    highProtein: true,
+    allergens: ['gluten', 'soya'],
+    tags: ['seitan', 'stroganoff', 'vegan', 'kremete', 'avansert'],
+    prepTime: 60,
+    difficulty: 'avansert',
+    leftoverFriendly: true,
+    vegetarianAlternative: null,
+    recipe: {
+      servings: 4,
+      steps: [
+        'Seitan-deigling: bland 150 g hvetegluten-mel, 200 ml grønnsakskraft, 1 ss soyasaus, 1 ts paprika og 1 ts hvitløkspulver. Kned forsiktig til elastisk deig. La hvile 15 minutter.',
+        'Del seitanen i mindre stykker. Kok i grønnsakskraft med løk, timian og laurloff i 45 minutter. Kjøl og skjær i biter.',
+        'Brun seitan-bitene raskt i olivenolje. Fjern og sett til side.',
+        'Fres skivet løk, sjampinjong (300 g) og paprika til gyllent. Tilsett 200 ml plantesøt (f.eks. havremelis) og la koke ned til dekkende.',
+        'Rør inn seitanen, 2 ts dijonsennep, og smak til med salt, pepper og lite sitronsaft. La småkoke 5 minutter.',
+        'Server over breie nudler (f.eks. egg-frie) med finhakket persille og paprika-pulver.',
+      ],
+    },
+    shoppingList: [
+      { item: 'Hvetegluten-mel/vital wheat gluten', search: 'vital wheat gluten', amount: '150 g', estimatedPrice: 35, category: 'Tørrvarer' },
+      { item: 'Sjampinjong frisk', search: 'sjampinjong', amount: '300 g', estimatedPrice: 40, category: 'Frukt/grønt' },
+      { item: 'Havremelis/plantesøt', search: 'havremelis', amount: '200 ml', estimatedPrice: 20, category: 'Tørrvarer' },
+      { item: 'Soyasaus', search: 'soyasaus', amount: '1 ss', estimatedPrice: 8, category: 'Tørrvarer' },
+      { item: 'Grønnsakskraft', search: 'grønnsakskraft', amount: '500 ml', estimatedPrice: 8, category: 'Tørrvarer' },
+      { item: 'Paprika', search: 'paprika', amount: '1 stk', estimatedPrice: 8, category: 'Frukt/grønt' },
+      { item: 'Breie nudler (egg-frie)', search: 'nudler egg-frie', amount: '400 g', estimatedPrice: 12, category: 'Tørrvarer' },
+    ],
+  },
+
 ];

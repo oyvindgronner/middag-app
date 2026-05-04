@@ -914,4 +914,67 @@ export const MEAT_MEALS = [
     ],
   },
 
+  {
+    id: 'entrecote-chimichurri-avansert',
+    name: 'Entrecôte med hjemmelaget chimichurri og grillede grønnsaker',
+    type: 'meat',
+    highProtein: true,
+    allergens: ['soya'],
+    tags: ['entrecôte', 'chimichurri', 'steak', 'argentinsk', 'avansert'],
+    prepTime: 40,
+    difficulty: 'avansert',
+    leftoverFriendly: false,
+    recipe: {
+      servings: 4,
+      steps: [
+        'Lag chimichurri: hakk fint 1 stor bunt petersilie, ½ bunt oregano, 4 hvitløkfedd, 2 røde chili og bland i bolle med 200 ml olivenolje, 3 ss rødvinseddik, 1 ts salt og pepper. La trekke minst 30 minutter.',
+        'Ta entrecôte (800 g, 4 cm tykk) ut av kjøleskapet 30 minutter før steking. Tørk godt og krydre rikelig med salt og pepper.',
+        'Grill oppvarmet til høy temperatur (230°C+). Stek entrecôten 4–5 minutter per side for medium-rare. La hvile 5 minutter.',
+        'Grill søtpotet (2 stk i strimler), paprika (2 stk i båter) og brokkoli (1 hode) penslede med olivenolje og salt i 5–8 minutter.',
+        'Server med chimichurri dryslet over og grillede grønnsaker på siden.',
+      ],
+    },
+    shoppingList: [
+      { item: 'Entrecôte/ribeye steak', search: 'entrecôte ribeye', amount: '800 g', estimatedPrice: 180, category: 'Kjøtt' },
+      { item: 'Petersilie frisk', search: 'petersilie', amount: '1 bunt', estimatedPrice: 8, category: 'Frukt/grønt' },
+      { item: 'Oregano frisk', search: 'oregano', amount: '½ bunt', estimatedPrice: 8, category: 'Frukt/grønt' },
+      { item: 'Rødchili', search: 'rødchili', amount: '2 stk', estimatedPrice: 10, category: 'Frukt/grønt' },
+      { item: 'Søtpotet', search: 'søtpotet', amount: '2 stk', estimatedPrice: 15, category: 'Frukt/grønt' },
+      { item: 'Paprika rød', search: 'paprika', amount: '2 stk', estimatedPrice: 15, category: 'Frukt/grønt' },
+      { item: 'Brokkoli', search: 'brokkoli', amount: '1 hode', estimatedPrice: 13, category: 'Frukt/grønt' },
+    ],
+  },
+
+  {
+    id: 'lam-tagine-marokko',
+    name: 'Marokkansk lam-tagine med aprikos og mandler',
+    type: 'meat',
+    highProtein: true,
+    allergens: ['nøtter', 'gluten'],
+    tags: ['lam', 'tagine', 'marokko', 'krydder', 'avansert'],
+    prepTime: 120,
+    difficulty: 'avansert',
+    leftoverFriendly: true,
+    recipe: {
+      servings: 4,
+      steps: [
+        'Glød hele krydder i tørr panne: 2 kanel-stenger, 6 grønne kardamom, 4 nellik, 1 stjerneanis. Mør dem lett og legg til siden.',
+        'Stek lam (800 g i biter) i partier i olivenolje til gyllent. Ta ut.',
+        'Stek finhakket løk (2) og revet ingefær (2 cm) til mykt, legg til krydderne.',
+        'Tilsett 2 ts paprika, 1 ts kummel, 200 ml lammekraft og hvitt vin (1 dl). Legg lammekjøttet tilbake, dekk og la småkoke 45 minutter.',
+        'Legg til sølvet løk (200 g), tørka aprikoser (100 g) og grønne oliven (75 g). Fortsett småkoking 20 minutter til lammekjøttet er mørt.',
+        'Smak til med salt, pepper og lite honning. Server med mandler og frisk koriander, sammen med kouskous eller rundstykker.',
+      ],
+    },
+    shoppingList: [
+      { item: 'Lammekjøtt', search: 'lammekjøtt', amount: '800 g', estimatedPrice: 150, category: 'Kjøtt' },
+      { item: 'Cinnamon-stenger', search: 'kanel stenger', amount: '2 stk', estimatedPrice: 12, category: 'Krydder' },
+      { item: 'Kardamom grønn', search: 'kardamom', amount: '6 stk', estimatedPrice: 15, category: 'Krydder' },
+      { item: 'Tørka aprikoser', search: 'aprikoser tørka', amount: '100 g', estimatedPrice: 25, category: 'Tørrvarer' },
+      { item: 'Mandler', search: 'mandler hele', amount: '100 g', estimatedPrice: 35, category: 'Tørrvarer' },
+      { item: 'Grønne oliven', search: 'oliven grønne', amount: '75 g', estimatedPrice: 20, category: 'Tørrvarer' },
+      { item: 'Lammekraft', search: 'lammekraft fond', amount: '200 ml', estimatedPrice: 20, category: 'Tørrvarer' },
+    ],
+  },
+
 ];

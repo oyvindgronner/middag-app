@@ -49,7 +49,13 @@ async function initializeDatabase() {
 initializeDatabase();
 
 // ── SECURITY MIDDLEWARE ──────────────────────────────────────────────────────
-app.use(helmet()); // Security headers: CSP, X-Frame-Options, X-Content-Type-Options, etc.
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+    },
+  },
+})); // Security headers: CSP, X-Frame-Options, X-Content-Type-Options, etc.
 
 app.use(cors());
 app.use(express.json());

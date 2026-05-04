@@ -33,12 +33,25 @@ function likeScore(meal, likesEspecially) {
 }
 
 // Velger inntil 'count' måltider fra en pool, med variasjon
-function pickMeals(pool, count, usedIds, lastType, likesEspecially, leftovers) {
+function pickMeals(pool, count, usedIds, lastType, likesEspecially, leftovers, ratings) {
   if (count <= 0 || pool.length === 0) return [];
 
-  const sorted = leftovers
-    ? [...pool].sort((a, b) => (b.leftoverFriendly ? 1 : 0) - (a.leftoverFriendly ? 1 : 0))
-    : pool;
+  const sorted = [...pool].sort((a, b) => {
+    // Sort by: 1) leftovers if requested, 2) rating (if available), 3) original order
+    if (leftovers) {
+      if (a.leftoverFriendly !== b.leftoverFriendly) {
+        return (b.leftoverFriendly ? 1 : 0) - (a.leftoverFriendly ? 1 : 0);
+      }
+    }
+
+    if (ratings) {
+      const ratingA = ratings[a.id] || 0;
+      const ratingB = ratings[b.id] || 0;
+      if (ratingB !== ratingA) return ratingB - ratingA; // Higher rating first
+    }
+
+    return 0;
+  });
 
   const selected = [];
   let curLastType = lastType;
@@ -106,9 +119,11 @@ function arrangeMeals(fishMeals, vegMeals, veganMeals, meatMeals, days) {
 
 /**
  * Velger måltider basert på brukerparametre.
+ * @param {Object} params - Brukeparametere
+ * @param {Object} ratings - Optional: { mealId: averageRating } for rating-based sorting
  * @returns {Array} Array av måltidsobjekter med dag-felt tilordnet
  */
-export function selectMeals(params) {
+export function selectMeals(params, ratings = {}) {
   const {
     days              = 5,
     persons           = 4,
@@ -188,9 +203,9 @@ export function selectMeals(params) {
   const selectedFish  = shuffle(fishPool).slice(0, numFish);
   selectedFish.forEach(m => usedIds.add(m.id));
 
-  const selectedVeg   = pickMeals(vegPool,   numVeg,   usedIds, null, likesEspecially, leftovers);
-  const selectedVegan = pickMeals(veganPool, numVegan, usedIds, null, likesEspecially, leftovers);
-  const selectedMeat  = pickMeals(meatPool,  numMeat,  usedIds, null, likesEspecially, leftovers);
+  const selectedVeg   = pickMeals(vegPool,   numVeg,   usedIds, null, likesEspecially, leftovers, ratings);
+  const selectedVegan = pickMeals(veganPool, numVegan, usedIds, null, likesEspecially, leftovers, ratings);
+  const selectedMeat  = pickMeals(meatPool,  numMeat,  usedIds, null, likesEspecially, leftovers, ratings);
 
   // ── Arranger og tilordne dager ────────────────────────────────────────────
   const arranged = arrangeMeals(selectedFish, selectedVeg, selectedVegan, selectedMeat, days);

@@ -129,8 +129,24 @@ app.get('/api/meal-plan', mealPlanLimiter, async (req, res) => {
   };
 
   try {
-    // Velg måltider
-    let meals = selectMeals(params);
+    // Hent ratings for rating-basert sortering (optional, graceful fallback)
+    let ratings = {};
+    try {
+      const ratingResult = await pool.query(`
+        SELECT meal_id, AVG(rating) as avg_rating
+        FROM meal_ratings
+        GROUP BY meal_id
+      `);
+      ratings = Object.fromEntries(
+        ratingResult.rows.map(r => [r.meal_id, parseFloat(r.avg_rating)])
+      );
+    } catch (err) {
+      // DB unavailable, continue without rating-based sorting
+      console.log('⚠️ Ratings unavailable, continuing without rating-based sorting');
+    }
+
+    // Velg måltider (ratings will be used for sorting if available)
+    let meals = selectMeals(params, ratings);
 
     if (!meals.length) {
       return res.status(422).json({

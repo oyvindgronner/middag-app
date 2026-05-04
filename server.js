@@ -13,6 +13,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy so rate limiting works correctly behind nginx
+app.set('trust proxy', 1);
+
 // ── DATABASE CLIENT ──────────────────────────────────────────────────────
 const pool = new pg.Pool({
   host: process.env.POSTGRES_HOST || 'localhost',

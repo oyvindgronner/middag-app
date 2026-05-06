@@ -116,7 +116,8 @@ function mergeShoppingList(meals) {
 app.get('/api/meal-plan', mealPlanLimiter, async (req, res) => {
   const q = req.query;
 
-  const days = Math.min(Math.max(parseInt(q.days) || 5, 1), 30);
+  const intOr = (val, def) => { const n = parseInt(val); return Number.isFinite(n) ? n : def; };
+  const days = Math.min(Math.max(intOr(q.days, 5), 1), 30);
   const adults = parseInt(q.adults);
   const children = parseInt(q.children);
   const params = {
@@ -124,12 +125,12 @@ app.get('/api/meal-plan', mealPlanLimiter, async (req, res) => {
     persons:           Math.min(Math.max((isNaN(adults) ? 2 : adults) + (isNaN(children) ? 0 : children), 1), 20),
     hasChildren:       (isNaN(children) ? 0 : children) > 0,
     allergies:         [].concat(q.allergies || []),
-    cookTime:          parseInt(q.cookTime) || 30,
+    cookTime:          intOr(q.cookTime, 30),
     difficulty:        q.difficulty || 'enkel',
     leftovers:         q.leftovers === 'true',
-    fishPerWeek:       Math.min(Math.max(parseInt(q.fishPerWeek) ?? 2, 0), days),
-    vegetarianPerWeek: Math.min(Math.max(parseInt(q.vegetarianPerWeek) ?? 1, 0), days),
-    veganPerWeek:      Math.min(Math.max(parseInt(q.veganPerWeek) ?? 0, 0), days),
+    fishPerWeek:       Math.max(intOr(q.fishPerWeek, 2), 0),
+    vegetarianPerWeek: Math.max(intOr(q.vegetarianPerWeek, 1), 0),
+    veganPerWeek:      Math.max(intOr(q.veganPerWeek, 0), 0),
     likesEspecially:   q.likesEspecially || '',
     dontWant:          q.dontWant || '',
   };

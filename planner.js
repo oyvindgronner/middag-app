@@ -168,32 +168,55 @@ export function selectMeals(params, ratings = {}) {
   const numFish  = allergies.includes('fisk') ? 0 : Math.min(fishPerWeek, days, fishPool.length);
   const numVeg   = Math.min(vegetarianPerWeek, days - numFish, vegPool.length);
   const numVegan = Math.min(veganPerWeek, days - numFish - numVeg, veganPool.length);
-  const numMeat  = Math.max(0, days - numFish - numVeg - numVegan);
+  const numMeat  = Math.min(Math.max(0, days - numFish - numVeg - numVegan), meatPool.length);
+  const totalDelivered = numFish + numVeg + numVegan + numMeat;
 
   // ── Detekter kompromisser ──────────────────────────────────────────────────
-  // Compromise = when requested amount exceeds what's available in pool, not just days limit
-  if (!allergies.includes('fisk') && fishPerWeek > fishPool.length) {
+  // Bygg en spesifikk reason basert på hva som faktisk begrenset kvoten
+  function buildReason(requested, delivered, poolSize, type, label) {
+    if (delivered >= requested) return null;
+    const reasons = [];
+    if (poolSize < requested) {
+      reasons.push(`bare ${poolSize} ${label} passer dine valg (tilberedningstid, vanskelighet, allergier)`);
+    }
+    if (requested > days) {
+      reasons.push(`uken har bare ${days} dager`);
+    } else if (delivered < requested && poolSize >= requested) {
+      reasons.push(`andre middagstyper tok plassen i ukeplanen`);
+    }
+    return reasons.join('; ');
+  }
+
+  if (!allergies.includes('fisk') && numFish < fishPerWeek) {
     compromises.push({
       type: 'fish',
-      requested: Math.min(fishPerWeek, days),
+      requested: fishPerWeek,
       provided: numFish,
-      reason: `Bare ${fishPool.length} fiskemiddager tilgjengelig`
+      reason: buildReason(fishPerWeek, numFish, fishPool.length, 'fish', 'fiskemiddager')
     });
   }
-  if (vegetarianPerWeek > vegPool.length) {
+  if (numVeg < vegetarianPerWeek) {
     compromises.push({
       type: 'vegetarian',
-      requested: Math.min(vegetarianPerWeek, days),
+      requested: vegetarianPerWeek,
       provided: numVeg,
-      reason: `Bare ${vegPool.length} vegetarmiddager tilgjengelig`
+      reason: buildReason(vegetarianPerWeek, numVeg, vegPool.length, 'vegetarian', 'vegetarmiddager')
     });
   }
-  if (veganPerWeek > veganPool.length) {
+  if (numVegan < veganPerWeek) {
     compromises.push({
       type: 'vegan',
-      requested: Math.min(veganPerWeek, days),
+      requested: veganPerWeek,
       provided: numVegan,
-      reason: `Bare ${veganPool.length} veganmiddager tilgjengelig`
+      reason: buildReason(veganPerWeek, numVegan, veganPool.length, 'vegan', 'veganmiddager')
+    });
+  }
+  if (totalDelivered < days) {
+    compromises.push({
+      type: 'days',
+      requested: days,
+      provided: totalDelivered,
+      reason: `Bare ${pool.length} oppskrifter passer dine valg (tilberedningstid, vanskelighet, allergier) – ikke nok til å fylle ${days} dager`
     });
   }
 

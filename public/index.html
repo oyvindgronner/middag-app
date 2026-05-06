@@ -1740,7 +1740,8 @@
         const typeLabel = {
           fish: 'Fiskemiddager',
           vegetarian: 'Vegetarmiddager',
-          vegan: 'Veganmiddager'
+          vegan: 'Veganmiddager',
+          days: 'Antall middager totalt'
         }[c.type] || c.type;
         return `<li><strong>${typeLabel}:</strong> Ønsket ${c.requested}, men bare ${c.provided} tilgjengelig. ${c.reason}</li>`;
       }).join('');

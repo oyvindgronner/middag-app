@@ -169,11 +169,48 @@ export function selectMeals(params, ratings = {}) {
   const numVeg   = Math.min(vegetarianPerWeek, days - numFish, vegPool.length);
   const numVegan = Math.min(veganPerWeek, days - numFish - numVeg, veganPool.length);
   const numMeat  = Math.min(Math.max(0, days - numFish - numVeg - numVegan), meatPool.length);
-  const totalDelivered = numFish + numVeg + numVegan + numMeat;
 
-  // ── Detekter kompromisser ──────────────────────────────────────────────────
-  // Bygg en spesifikk reason basert på hva som faktisk begrenset kvoten
-  function buildReason(requested, delivered, poolSize, type, label) {
+  // ── Smart preferanse-bytte ────────────────────────────────────────────────
+  // Hvis likesEspecially er satt og ingen av de kvoterte typene har matchende retter,
+  // bytt 1 quota fra en ikke-matchende type til en matchende type.
+  let actualFishQuota = numFish;
+  let actualVegQuota = numVeg;
+  let actualVeganQuota = numVegan;
+  let actualMeatQuota = numMeat;
+
+  if (likesEspecially) {
+    const matchInPool = (p) => p.some(m => likeScore(m, likesEspecially) > 0);
+    const quotas = { fish: actualFishQuota, vegetarian: actualVegQuota, vegan: actualVeganQuota, meat: actualMeatQuota };
+    const pools  = { fish: fishPool, vegetarian: vegPool, vegan: veganPool, meat: meatPool };
+    const willMatch = Object.entries(quotas).some(([t, q]) => q > 0 && matchInPool(pools[t]));
+    const matchingTypes = Object.entries(pools).filter(([_, p]) => matchInPool(p)).map(([t]) => t);
+
+    if (!willMatch && matchingTypes.length > 0) {
+      const targetType = matchingTypes[0];
+      const stealOrder = ['meat', 'vegetarian', 'vegan', 'fish'];
+      for (const stealFrom of stealOrder) {
+        if (stealFrom === targetType) continue;
+        if (quotas[stealFrom] > 0) {
+          quotas[stealFrom]--;
+          quotas[targetType]++;
+          compromises.push({
+            type: 'preference',
+            requested: likesEspecially,
+            provided: 1,
+            reason: `Byttet ut én ${stealFrom === 'meat' ? 'kjøtt' : stealFrom === 'fish' ? 'fisk' : stealFrom}-middag med en ${targetType === 'meat' ? 'kjøtt' : targetType === 'fish' ? 'fisk' : targetType}-rett som matcher "${likesEspecially}"`
+          });
+          break;
+        }
+      }
+      actualFishQuota  = quotas.fish;
+      actualVegQuota   = quotas.vegetarian;
+      actualVeganQuota = quotas.vegan;
+      actualMeatQuota  = quotas.meat;
+    }
+  }
+
+  // ── Detekter kompromisser (basert på actual quota etter smart-bytte) ──────
+  function buildReason(requested, delivered, poolSize, label) {
     if (delivered >= requested) return null;
     const reasons = [];
     if (poolSize < requested) {
@@ -187,28 +224,30 @@ export function selectMeals(params, ratings = {}) {
     return reasons.join('; ');
   }
 
-  if (!allergies.includes('fisk') && numFish < fishPerWeek) {
+  const totalDelivered = actualFishQuota + actualVegQuota + actualVeganQuota + actualMeatQuota;
+
+  if (!allergies.includes('fisk') && actualFishQuota < fishPerWeek) {
     compromises.push({
       type: 'fish',
       requested: fishPerWeek,
-      provided: numFish,
-      reason: buildReason(fishPerWeek, numFish, fishPool.length, 'fish', 'fiskemiddager')
+      provided: actualFishQuota,
+      reason: buildReason(fishPerWeek, actualFishQuota, fishPool.length, 'fiskemiddager')
     });
   }
-  if (numVeg < vegetarianPerWeek) {
+  if (actualVegQuota < vegetarianPerWeek) {
     compromises.push({
       type: 'vegetarian',
       requested: vegetarianPerWeek,
-      provided: numVeg,
-      reason: buildReason(vegetarianPerWeek, numVeg, vegPool.length, 'vegetarian', 'vegetarmiddager')
+      provided: actualVegQuota,
+      reason: buildReason(vegetarianPerWeek, actualVegQuota, vegPool.length, 'vegetarmiddager')
     });
   }
-  if (numVegan < veganPerWeek) {
+  if (actualVeganQuota < veganPerWeek) {
     compromises.push({
       type: 'vegan',
       requested: veganPerWeek,
-      provided: numVegan,
-      reason: buildReason(veganPerWeek, numVegan, veganPool.length, 'vegan', 'veganmiddager')
+      provided: actualVeganQuota,
+      reason: buildReason(veganPerWeek, actualVeganQuota, veganPool.length, 'veganmiddager')
     });
   }
   if (totalDelivered < days) {
@@ -223,12 +262,48 @@ export function selectMeals(params, ratings = {}) {
   // ── Velg måltider ─────────────────────────────────────────────────────────
   const usedIds = new Set();
 
-  const selectedFish  = shuffle(fishPool).slice(0, numFish);
+  // Fisk-velger respekterer likesEspecially-sortering (pool er allerede sortert)
+  const fishOrder = likesEspecially ? fishPool : shuffle(fishPool);
+  const selectedFish = fishOrder.slice(0, actualFishQuota);
   selectedFish.forEach(m => usedIds.add(m.id));
 
-  const selectedVeg   = pickMeals(vegPool,   numVeg,   usedIds, null, likesEspecially, leftovers, ratings);
-  const selectedVegan = pickMeals(veganPool, numVegan, usedIds, null, likesEspecially, leftovers, ratings);
-  const selectedMeat  = pickMeals(meatPool,  numMeat,  usedIds, null, likesEspecially, leftovers, ratings);
+  const selectedVeg   = pickMeals(vegPool,   actualVegQuota,   usedIds, null, likesEspecially, leftovers, ratings);
+  const selectedVegan = pickMeals(veganPool, actualVeganQuota, usedIds, null, likesEspecially, leftovers, ratings);
+  const selectedMeat  = pickMeals(meatPool,  actualMeatQuota,  usedIds, null, likesEspecially, leftovers, ratings);
+
+  // Sjekk om preferanse faktisk ble oppfylt etter alt; hvis ikke, vis kompromiss
+  if (likesEspecially) {
+    const allSelected = [...selectedFish, ...selectedVeg, ...selectedVegan, ...selectedMeat];
+    const hasMatch = allSelected.some(m => likeScore(m, likesEspecially) > 0);
+    const matchInFullPool = pool.some(m => likeScore(m, likesEspecially) > 0);
+    const matchInAllMeals = MEALS.some(m => likeScore(m, likesEspecially) > 0);
+    const alreadyHasPrefCompromise = compromises.some(c => c.type === 'preference');
+
+    if (!hasMatch && !alreadyHasPrefCompromise) {
+      if (!matchInAllMeals) {
+        compromises.push({
+          type: 'preference',
+          requested: likesEspecially,
+          provided: 0,
+          reason: `Ingen oppskrifter i databasen matcher "${likesEspecially}". Prøv andre søkeord (f.eks. "indisk", "asiatisk", "italiensk").`
+        });
+      } else if (!matchInFullPool) {
+        compromises.push({
+          type: 'preference',
+          requested: likesEspecially,
+          provided: 0,
+          reason: `Vi har "${likesEspecially}"-retter, men ingen passer dine valg av tilberedningstid, vanskelighet eller allergier.`
+        });
+      } else {
+        compromises.push({
+          type: 'preference',
+          requested: likesEspecially,
+          provided: 0,
+          reason: `Ingen av de valgte middagene matcher "${likesEspecially}". Prøv å øke kvota for matchende type.`
+        });
+      }
+    }
+  }
 
   // ── Arranger og tilordne dager ────────────────────────────────────────────
   const arranged = arrangeMeals(selectedFish, selectedVeg, selectedVegan, selectedMeat, days);

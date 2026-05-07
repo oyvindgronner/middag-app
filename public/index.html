@@ -1741,8 +1741,12 @@
           fish: 'Fiskemiddager',
           vegetarian: 'Vegetarmiddager',
           vegan: 'Veganmiddager',
-          days: 'Antall middager totalt'
+          days: 'Antall middager totalt',
+          preference: 'Liker spesielt'
         }[c.type] || c.type;
+        if (c.type === 'preference') {
+          return `<li><strong>${typeLabel}:</strong> ${c.reason}</li>`;
+        }
         return `<li><strong>${typeLabel}:</strong> Ønsket ${c.requested}, men bare ${c.provided} tilgjengelig. ${c.reason}</li>`;
       }).join('');
 

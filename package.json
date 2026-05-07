@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "test": "node --test test/planner.test.js",
+    "test:smoke": "bash test/api-smoke.sh"
   },
   "dependencies": {
     "cors": "^2.8.5",
